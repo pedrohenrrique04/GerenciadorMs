@@ -8,10 +8,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import io.github.cdimascio.dotenv.Dotenv;
+import java.sql.Connection;
+import java.sql.DriverManager;
+
 public class Conexao {
-    private static final String url = "jdbc:mysql://localhost:3306/meubanco";
-    private static final String user = "root";
-    private static final String pass = "1234";
+    private static final Dotenv dotenv = Dotenv.load();
+
+    private static final String url = dotenv.get("DB_URL");
+    private static final String user = dotenv.get("DB_USER");
+    private static final String pass = dotenv.get("DB_PASS");
 
     private static Connection conn;
 
@@ -19,13 +25,11 @@ public class Conexao {
         try {
             if (conn == null) {
                 conn = DriverManager.getConnection(url, user, pass);
-                return conn;
-            } else {
-                return conn;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return conn;
     }
-    }
+}
+
