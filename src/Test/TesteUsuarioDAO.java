@@ -9,6 +9,4 @@ public class TesteUsuarioDAO {
 
         new UsuarioDAO().cadastrarUsuario(u);
     }
-
-
 }
