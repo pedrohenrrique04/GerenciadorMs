@@ -3,7 +3,9 @@ package Dao;
 import Model.Usuario;
 import util.Conexao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UsuarioDAO {
@@ -18,6 +20,23 @@ public class UsuarioDAO {
             ps.execute();
         }catch (SQLException e){
             e.printStackTrace();
+        }
+    }
+
+    public boolean validarLogin(String nome, String senha) {
+        String sql = "SELECT * FROM usuario WHERE nome = ? AND senha = ?";
+        Connection conn = Conexao.getConn();
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, nome);
+            ps.setString(2, senha);
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next(); // se encontrou o usuário, retorna true
+        } catch (SQLException e) {
+            System.out.println("Erro ao validar login: " + e.getMessage());
+            return false;
         }
     }
 }
