@@ -96,7 +96,7 @@ public class LoginView extends JFrame {
                     JOptionPane.showMessageDialog(null, "Login bem-sucedido!");
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Usuário ou senha incorretos.");
+                    JOptionPane.showMessageDialog(null, "Usuário ou senha incorretos. reqwerere");
                 }
             }
         });
