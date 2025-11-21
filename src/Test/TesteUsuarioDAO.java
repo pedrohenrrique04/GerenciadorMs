@@ -5,7 +5,7 @@ import Model.Usuario;
 
 public class TesteUsuarioDAO {
     public static void main(String[] args) {
-        Usuario u = new Usuario("Pedro", "1234");
+        Usuario u = new Usuario("verto", "123456");
 
         new UsuarioDAO().cadastrarUsuario(u);
     }
