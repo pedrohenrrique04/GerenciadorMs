@@ -79,20 +79,20 @@
                         </items>
                     </ComboBox>
 
-                    <Button layoutX="428.0" layoutY="40.0" prefWidth="140"
+                    <!--<Button layoutX="428.0" layoutY="40.0" prefWidth="140"
                             style="-fx-background-color: #E0E0E0; -fx-background-radius: 8;"
-                            text="Exportar PDF"/>
+                            text="Exportar PDF"/>-->
 
-                    <Button layoutX="608.0" layoutY="40.0" prefWidth="140"
+                    <!--<Button layoutX="608.0" layoutY="40.0" prefWidth="140"
                             style="-fx-background-color: #E0E0E0; -fx-background-radius: 8;"
-                            text="Exportar Excel"/>
+                            text="Exportar Excel"/>-->
 
                     <!-- CARD TOTAL VENDAS -->
                     <VBox alignment="CENTER" layoutX="608.0" layoutY="92.0"
                           prefHeight="100" prefWidth="200" spacing="5"
                           style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
                                  -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
-                        <Label text="Total de Vendas"><font><Font name="System Bold" size="14"/></font></Label>
+                        <Label text="Total de Vendas por Periodo"><font><Font name="System Bold" size="14"/></font></Label>
                         <Label fx:id="lblTotalVendas" text="R$ 0,00"><font><Font name="System" size="18"/></font></Label>
                     </VBox>
 
@@ -101,7 +101,7 @@
                           prefHeight="100" prefWidth="200" spacing="5"
                           style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
                                  -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
-                        <Label text="Lucro Bruto"><font><Font name="System Bold" size="14"/></font></Label>
+                        <Label text="Lucro Bruto por Periodo"><font><Font name="System Bold" size="14"/></font></Label>
                         <Label fx:id="lblLucroBruto" text="R$ 0,00"><font><Font name="System" size="18"/></font></Label>
                     </VBox>
 
@@ -110,7 +110,7 @@
                           prefHeight="100" prefWidth="200" spacing="5"
                           style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
                                  -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
-                        <Label text="Margem de Lucro %"><font><Font name="System Bold" size="14"/></font></Label>
+                        <Label text="Margem de Lucro % por Periodo"><font><Font name="System Bold" size="14"/></font></Label>
                         <Label fx:id="lblMargemLucro" text="0.00%"><font><Font name="System" size="18"/></font></Label>
                     </VBox>
 
@@ -119,23 +119,23 @@
                           style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
                                  -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
                         <children>
-                            <Label style="-fx-font-weight: bold; -fx-padding: 10;" text="Vendas por Semana"/>
+                            <Label style="-fx-font-weight: bold; -fx-padding: 10;" text="Vendas por Semana no Ano Atual"/>
                             <Accordion fx:id="accordionSemanas" prefHeight="480.0" prefWidth="540.0"/>
                         </children>
                     </VBox>
 
-                    <!-- GRÁFICO POR SEMANA -->
+                    <!-- GRÁFICO MENSAL (SUBSTITUÍ O DE SEMANA) -->
                     <VBox layoutX="608.0" layoutY="216.0"
                           prefHeight="402.0" prefWidth="658.0"
                           style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
                                  -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
                         <children>
                             <Label style="-fx-font-weight: bold; -fx-padding: 10;"
-                                   text="Faturamento por Semana"/>
+                                   text="Faturamento por Mês no Ano Atual"/>
 
-                            <BarChart fx:id="graficoSemanal" prefHeight="367.0" prefWidth="640.0">
-                                <xAxis><CategoryAxis fx:id="eixoSemana" label="Semana"/></xAxis>
-                                <yAxis><NumberAxis fx:id="eixoValorSemanal" label="Valor (R$)"/></yAxis>
+                            <BarChart fx:id="graficoMensal" prefHeight="367.0" prefWidth="640.0">
+                                <xAxis><CategoryAxis fx:id="eixoMes" label="Mês"/></xAxis>
+                                <yAxis><NumberAxis fx:id="eixoValorMensal" label="Valor (R$)"/></yAxis>
                             </BarChart>
                         </children>
                     </VBox>
