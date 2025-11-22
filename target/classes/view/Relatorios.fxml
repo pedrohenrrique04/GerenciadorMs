@@ -56,7 +56,7 @@
                               style="-fx-background-radius: 8; -fx-background-color: #E0E0E0;">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Vendas"/>
+                                    <String fx:value="Vendas"/>
                                 <String fx:value="Produtos"/>
                             </FXCollections>
                         </items>
