@@ -1,5 +1,7 @@
 package Dao;
 
+import Model.VendaMensal;
+import Model.VendaSemanal;
 import util.Conexao;
 
 import java.sql.Connection;
@@ -8,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RelatoriosDao {
 
@@ -84,5 +88,62 @@ public class RelatoriosDao {
         }
 
         return (lucroBruto / totalVendas) * 100.0;
+    }
+    public List<VendaSemanal> getVendasSemanal() {
+
+        List<VendaSemanal> lista = new ArrayList<>();
+
+        String sql =
+                "SELECT " +
+                        "  WEEK(data_venda, 1) AS semana, " +
+                        "  SUM(total) AS total_semana " +
+                        "FROM vendas " +
+                        "GROUP BY WEEK(data_venda, 1) " +
+                        "ORDER BY semana";
+
+        try (Connection conn = Conexao.getConn();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int numeroSemana = rs.getInt("semana");
+                double total = rs.getDouble("total_semana");
+
+                String nomeSemana = "Semana " + numeroSemana;
+
+                lista.add(new VendaSemanal(nomeSemana, total));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar vendas semanais: " + e.getMessage());
+        }
+
+        return lista;
+    }
+    public List<VendaMensal> getVendasMensais() {
+        List<VendaMensal> lista = new ArrayList<>();
+
+        String sql =
+                "SELECT MONTH(data_venda) AS mes, SUM(total) AS total_mes " +
+                        "FROM vendas " +
+                        "WHERE YEAR(data_venda) = YEAR(CURDATE()) " +
+                        "GROUP BY MONTH(data_venda) " +
+                        "ORDER BY mes";
+
+        try (Connection conn = Conexao.getConn();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int mes = rs.getInt("mes");
+                double total = rs.getDouble("total_mes");
+                lista.add(new VendaMensal(mes, total));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar vendas mensais: " + e.getMessage());
+        }
+
+        return lista;
     }
 }

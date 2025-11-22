@@ -1,6 +1,8 @@
 package controller;
 
 import Dao.RelatoriosDao;
+import Model.VendaMensal;
+import Model.VendaSemanal;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
@@ -9,8 +11,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -19,6 +27,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class RelatoriosController implements Initializable {
@@ -31,7 +42,14 @@ public class RelatoriosController implements Initializable {
     @FXML private Label lblTotalVendas;
 
     @FXML private Label lblLucroBruto;
-    @FXML private Label lblMargemLucro;   // ← ADICIONADO
+    @FXML private Label lblMargemLucro;
+
+    @FXML private Accordion accordionSemanas;
+
+    // --- GRÁFICO MENSAL (substitui o semanal) ---
+    @FXML private BarChart<String, Number> graficoMensal;
+    @FXML private CategoryAxis eixoMes;
+    @FXML private NumberAxis eixoValorMensal;
 
     private HamburgerSlideCloseTransition transition;
 
@@ -59,6 +77,11 @@ public class RelatoriosController implements Initializable {
         comboPeriodo.setOnAction(event -> {
             atualizarPeriodo(comboPeriodo.getValue());
         });
+
+        carregarVendasSemanais();
+
+        // carregar o gráfico mensal ao iniciar
+        carregarGraficoMensal();
     }
 
     private void atualizarPeriodo(String opcao) {
@@ -89,7 +112,10 @@ public class RelatoriosController implements Initializable {
 
         carregarTotalDeVendas();
         carregarLucroBruto();
-        carregarMargemLucro();   // ← ADICIONADO
+        carregarMargemLucro();
+        // atualizar o gráfico quando o período muda para "Anual" ou "Mensal" faz sentido.
+        // aqui mantemos o gráfico mensal com dados do ano atual sempre (você pode adaptar se quiser filtrar).
+        carregarGraficoMensal();
     }
 
     private void carregarTotalDeVendas() {
@@ -106,11 +132,86 @@ public class RelatoriosController implements Initializable {
         lblLucroBruto.setText(String.format("R$ %.2f", lucro));
     }
 
-    private void carregarMargemLucro() {   // ← ADICIONADO
+    private void carregarMargemLucro() {
         if (dataInicial == null || dataFinal == null) return;
 
         double margem = relatorioDAO.getMargemLucro(dataInicial, dataFinal);
         lblMargemLucro.setText(String.format("%.2f%%", margem));
+    }
+
+    private void carregarVendasSemanais() {
+        accordionSemanas.getPanes().clear();
+
+        List<VendaSemanal> lista = relatorioDAO.getVendasSemanal();
+
+        for (VendaSemanal venda : lista) {
+
+            VBox conteudo = new VBox();
+            conteudo.setSpacing(5);
+            conteudo.setStyle("-fx-padding: 10;");
+
+            Label lblTotal = new Label("Total vendido: R$ " + String.format("%.2f", venda.getTotal()));
+            lblTotal.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
+
+            conteudo.getChildren().add(lblTotal);
+
+            TitledPane pane = new TitledPane(venda.getSemana(), conteudo);
+
+            accordionSemanas.getPanes().add(pane);
+        }
+    }
+
+    // ============================
+    //   GRÁFICO MENSAL
+    // ============================
+
+    /**
+     * Carrega o gráfico mostrando os 12 meses do ano atual.
+     * Meses sem vendas aparecem com valor 0.
+     */
+    private void carregarGraficoMensal() {
+        // limpa dados antigos
+        graficoMensal.getData().clear();
+
+        // pega dados do DAO (espera-se que retorne meses com vendas do ano atual)
+        List<VendaMensal> listaMensal = relatorioDAO.getVendasMensais();
+
+        // mapeia mês -> total (para preencher meses faltantes com 0)
+        Map<Integer, Double> mapa = new HashMap<>();
+        for (int m = 1; m <= 12; m++) {
+            mapa.put(m, 0.0);
+        }
+        if (listaMensal != null) {
+            for (VendaMensal vm : listaMensal) {
+                if (vm != null) {
+                    mapa.put(vm.getMes(), vm.getTotal());
+                }
+            }
+        }
+
+        XYChart.Series<String, Number> serie = new XYChart.Series<>();
+        serie.setName("Vendas Mensais");
+
+        for (int m = 1; m <= 12; m++) {
+            String nome = nomeDoMes(m);
+            Number valor = mapa.get(m);
+            serie.getData().add(new XYChart.Data<>(nome, valor));
+        }
+
+        graficoMensal.getData().add(serie);
+
+        // opcional: ajustar título do eixo (se quiser)
+        eixoMes.setLabel("Mês");
+        eixoValorMensal.setLabel("Total (R$)");
+    }
+
+    private String nomeDoMes(int mes) {
+        String[] nomes = {
+                "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+                "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+        };
+        if (mes >= 1 && mes <= 12) return nomes[mes - 1];
+        return String.valueOf(mes);
     }
 
     // ------------- MENU LATERAL ----------------------
