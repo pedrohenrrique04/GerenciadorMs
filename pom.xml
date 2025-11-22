@@ -2,6 +2,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.gerenciador</groupId>
@@ -9,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+
         <!-- MySQL Connector -->
         <dependency>
             <groupId>com.mysql</groupId>
@@ -16,12 +18,13 @@
             <version>8.3.0</version>
         </dependency>
 
-        <!-- JavaFX -->
+        <!-- JavaFX 17 -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>17.0.12</version>
         </dependency>
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
@@ -29,9 +32,17 @@
         </dependency>
 
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>17.0.12</version>
+        </dependency>
+
+        <!-- JFoenix -->
+        <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
-            <version>9.0.10</version> </dependency>
+            <version>9.0.10</version>
+        </dependency>
 
         <!-- Dotenv -->
         <dependency>
@@ -39,6 +50,7 @@
             <artifactId>dotenv-java</artifactId>
             <version>3.0.0</version>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -49,8 +61,14 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>view.Main</mainClass>
+                    <modules>
+                        <module>javafx.controls</module>
+                        <module>javafx.fxml</module>
+                        <module>javafx.graphics</module>
+                    </modules>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>
