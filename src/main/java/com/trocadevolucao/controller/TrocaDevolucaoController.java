@@ -7,27 +7,22 @@ import javafx.scene.control.*;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class TrocaDevolucaoController implements Initializable {
 
     @FXML private TabPane mainTabPane;
 
-    @FXML private CheckBox roupasCheck, calcadosCheck, acessoriosCheck;
-    @FXML private RadioButton masculinoRadio, femininoRadio, unisexRadio;
-    @FXML private CheckBox brancoCheck, pretoCheck, verdeCheck;
-
-    @FXML private TextField nomeField, quantidadeField, precoCustoField, precoVendaField;
-    @FXML private TextField dataEntradaField, dataReposicaoField;
-    @FXML private Button excluirBtn, editarBtn, salvarBtn;
+    // Campos realmente existentes no FXML
+    @FXML private TextField nomeField, quantidadeField, precoVendaField;
     @FXML private Label idLabel, nomeProdutoLabel, precoLabel;
 
     @FXML private TextField motivoField, numeroPedidoField;
     @FXML private DatePicker dataTrocaField;
     @FXML private RadioButton trocaRadio, devolucaoRadio;
+    @FXML private ToggleGroup tipoSolicitacaoGroup;
     @FXML private TextArea observacoesArea;
-    @FXML private Button processarBtn, cancelarBtn;
+    @FXML private Button excluirBtn, editarBtn, salvarBtn, processarBtn, cancelarBtn;
 
     private TrocaDevolucao trocaDevolucaoAtual;
     private boolean editando = false;
@@ -40,14 +35,9 @@ public class TrocaDevolucaoController implements Initializable {
     }
 
     private void configurarComponentes() {
-        ToggleGroup generoGroup = new ToggleGroup();
-        masculinoRadio.setToggleGroup(generoGroup);
-        femininoRadio.setToggleGroup(generoGroup);
-        unisexRadio.setToggleGroup(generoGroup);
 
-        ToggleGroup tipoSolicitacaoGroup = new ToggleGroup();
-        trocaRadio.setToggleGroup(tipoSolicitacaoGroup);
-        devolucaoRadio.setToggleGroup(tipoSolicitacaoGroup);
+        // ToggleGroup já vem setado no FXML, NÃO recrie aqui.
+        tipoSolicitacaoGroup.selectToggle(trocaRadio);
 
         excluirBtn.setOnAction(e -> excluirSolicitacao());
         editarBtn.setOnAction(e -> toggleEdicao());
@@ -65,51 +55,41 @@ public class TrocaDevolucaoController implements Initializable {
     }
 
     private void carregarTrocaDevolucaoExemplo() {
-        // CORREÇÃO: Chamada do construtor ajustada para 8 parâmetros (sem o ID)
+
         trocaDevolucaoAtual = new TrocaDevolucao(
                 99,                       // Produto ID
                 "PED-2024-001",           // Número do Pedido
-                "TROCA",                  // Tipo de Solicitação
+                "TROCA",                  // Tipo
                 "Produto com defeito",    // Motivo
-                LocalDate.now(),          // Data da Solicitação
+                LocalDate.now(),          // Data
                 "PENDENTE",               // Status
                 1,                        // Quantidade
                 799.99                    // Valor Total
         );
-        // Define o ID via setter, simulando um objeto carregado do DB
+
         trocaDevolucaoAtual.setId(1);
 
         atualizarCamposTrocaDevolucao();
     }
 
     private void atualizarCamposTrocaDevolucao() {
-        if (trocaDevolucaoAtual != null) {
-            idLabel.setText(String.valueOf(trocaDevolucaoAtual.getId()));
-            nomeProdutoLabel.setText("Produto ID: " + trocaDevolucaoAtual.getProdutoId());
-            precoLabel.setText(String.format("R$ %.2f", trocaDevolucaoAtual.getValorTotal()));
+        if (trocaDevolucaoAtual == null) return;
 
-            numeroPedidoField.setText(trocaDevolucaoAtual.getNumeroPedido());
-            motivoField.setText(trocaDevolucaoAtual.getMotivo());
-            observacoesArea.setText(trocaDevolucaoAtual.getObservacoes());
-            dataTrocaField.setValue(trocaDevolucaoAtual.getDataSolicitacao());
+        idLabel.setText(String.valueOf(trocaDevolucaoAtual.getId()));
+        nomeProdutoLabel.setText("Produto ID: " + trocaDevolucaoAtual.getProdutoId());
+        precoLabel.setText(String.format("R$ %.2f", trocaDevolucaoAtual.getValorTotal()));
 
-            if (trocaDevolucaoAtual.isTroca()) {
-                trocaRadio.setSelected(true);
-            } else if (trocaDevolucaoAtual.isDevolucao()) {
-                devolucaoRadio.setSelected(true);
-            }
+        numeroPedidoField.setText(trocaDevolucaoAtual.getNumeroPedido());
+        motivoField.setText(trocaDevolucaoAtual.getMotivo());
+        observacoesArea.setText(trocaDevolucaoAtual.getObservacoes());
+        dataTrocaField.setValue(trocaDevolucaoAtual.getDataSolicitacao());
 
-            quantidadeField.setText(String.valueOf(trocaDevolucaoAtual.getQuantidade()));
+        if (trocaDevolucaoAtual.isTroca()) trocaRadio.setSelected(true);
+        else devolucaoRadio.setSelected(true);
 
-            // CORREÇÃO: Substitui getValorUnitario() por cálculo
-            double valorUnitario = trocaDevolucaoAtual.getValorTotal() / trocaDevolucaoAtual.getQuantidade();
-            precoVendaField.setText(String.format("R$ %.2f", valorUnitario));
-
-            atualizarFiltros();
-        }
-    }
-
-    private void atualizarFiltros() {
+        quantidadeField.setText(String.valueOf(trocaDevolucaoAtual.getQuantidade()));
+        double valorUnitario = trocaDevolucaoAtual.getValorTotal() / trocaDevolucaoAtual.getQuantidade();
+        precoVendaField.setText(String.format("R$ %.2f", valorUnitario));
     }
 
     @FXML
@@ -130,14 +110,13 @@ public class TrocaDevolucaoController implements Initializable {
     private void toggleEdicaoCampos(boolean editavel) {
         nomeField.setEditable(editavel);
         quantidadeField.setEditable(editavel);
-        precoCustoField.setEditable(editavel);
         precoVendaField.setEditable(editavel);
-        dataEntradaField.setEditable(editavel);
-        dataReposicaoField.setEditable(editavel);
+
         motivoField.setEditable(editavel);
         numeroPedidoField.setEditable(editavel);
         dataTrocaField.setDisable(!editavel);
         observacoesArea.setEditable(editavel);
+
         trocaRadio.setDisable(!editavel);
         devolucaoRadio.setDisable(!editavel);
     }
@@ -146,20 +125,12 @@ public class TrocaDevolucaoController implements Initializable {
     private void salvarSolicitacao() {
         try {
             if (motivoField.getText().isEmpty() || numeroPedidoField.getText().isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Atenção");
-                alert.setHeaderText("Campos obrigatórios");
-                alert.setContentText("Preencha o motivo e número do pedido.");
-                alert.showAndWait();
+                alertWarn("Preencha o motivo e número do pedido.");
                 return;
             }
 
             if (!trocaRadio.isSelected() && !devolucaoRadio.isSelected()) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Atenção");
-                alert.setHeaderText("Tipo de solicitação");
-                alert.setContentText("Selecione Troca ou Devolução.");
-                alert.showAndWait();
+                alertWarn("Selecione Troca ou Devolução.");
                 return;
             }
 
@@ -168,141 +139,117 @@ public class TrocaDevolucaoController implements Initializable {
             trocaDevolucaoAtual.setObservacoes(observacoesArea.getText());
             trocaDevolucaoAtual.setDataSolicitacao(dataTrocaField.getValue());
 
-            String tipoSolicitacao = trocaRadio.isSelected() ? "TROCA" : "DEVOLUCAO";
-            trocaDevolucaoAtual.setTipoSolicitacao(tipoSolicitacao);
+            String tipo = trocaRadio.isSelected() ? "TROCA" : "DEVOLUCAO";
+            trocaDevolucaoAtual.setTipoSolicitacao(tipo);
 
-            // Nota: O valor total deve ser recalculado com base no valor unitário e quantidade
-            int novaQuantidade = Integer.parseInt(quantidadeField.getText().replaceAll("[^0-9]", ""));
-            double novoValorUnitario = Double.parseDouble(precoVendaField.getText().replace("R$", "").replace(",", ".").trim());
+            int quantidade = Integer.parseInt(quantidadeField.getText().replaceAll("[^0-9]", ""));
+            double unitario = Double.parseDouble(precoVendaField.getText().replace("R$", "").replace(",", ".").trim());
 
-            trocaDevolucaoAtual.setQuantidade(novaQuantidade);
-            // Assumindo que setValorTotal é o que armazena o valor total da linha:
-            trocaDevolucaoAtual.setValorTotal(novoValorUnitario * novaQuantidade);
+            trocaDevolucaoAtual.setQuantidade(quantidade);
+            trocaDevolucaoAtual.setValorTotal(unitario * quantidade);
 
-            nomeProdutoLabel.setText("Produto ID: " + trocaDevolucaoAtual.getProdutoId());
             precoLabel.setText(String.format("R$ %.2f", trocaDevolucaoAtual.getValorTotal()));
 
             toggleEdicao();
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Sucesso");
-            alert.setHeaderText(null);
-            alert.setContentText("Solicitação salva com sucesso!");
-            alert.showAndWait();
+            alertInfo("Solicitação salva com sucesso!");
 
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro");
-            alert.setHeaderText("Erro ao salvar solicitação");
-            alert.setContentText("Verifique os dados informados. Detalhe: " + e.getMessage());
-            alert.showAndWait();
+            alertError("Erro ao salvar: " + e.getMessage());
         }
     }
 
     @FXML
     private void excluirSolicitacao() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmação");
-        alert.setHeaderText("Excluir Solicitação");
-        alert.setContentText("Tem certeza que deseja excluir esta solicitação de troca/devolução?");
-
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                System.out.println("Solicitação excluída: " + trocaDevolucaoAtual.getNumeroPedido());
-
-                Alert info = new Alert(Alert.AlertType.INFORMATION);
-                info.setTitle("Sucesso");
-                info.setHeaderText(null);
-                info.setContentText("Solicitação excluída com sucesso!");
-                info.showAndWait();
-            }
-        });
+        if (alertConfirm("Tem certeza que deseja excluir?")) {
+            alertInfo("Solicitação excluída com sucesso!");
+        }
     }
 
     @FXML
     private void processarSolicitacao() {
         try {
-            if (motivoField.getText().isEmpty() || numeroPedidoField.getText().isEmpty() ||
-                    dataTrocaField.getValue() == null) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Atenção");
-                alert.setHeaderText("Campos obrigatórios");
-                alert.setContentText("Preencha todos os campos obrigatórios.");
-                alert.showAndWait();
+            if (motivoField.getText().isEmpty() || numeroPedidoField.getText().isEmpty()) {
+                alertWarn("Preencha todos os campos obrigatórios.");
                 return;
             }
 
-            String tipoSolicitacao = trocaRadio.isSelected() ? "Troca" : "Devolução";
+            String tipo = trocaRadio.isSelected() ? "Troca" : "Devolução";
 
-            // Aviso: O método 'processar' não existe no TrocaDevolucao.java.
-            // Se esta linha causar um erro, você precisará implementá-lo no Model.
-            trocaDevolucaoAtual.processar(
-                    trocaRadio.isSelected() ? "TROCA_PRODUTO" : "ESTORNO",
-                    trocaRadio.isSelected() ? "Novo Produto" : null,
-                    trocaRadio.isSelected() ? 100 : null
-            );
+            System.out.println("Processando " + tipo + "...");
 
-            System.out.println("Processando " + tipoSolicitacao + " para o pedido: " + trocaDevolucaoAtual.getNumeroPedido());
-            System.out.println("Número do pedido: " + numeroPedidoField.getText());
-            System.out.println("Motivo: " + motivoField.getText());
-            System.out.println("Data: " + dataTrocaField.getValue());
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Sucesso");
-            alert.setHeaderText("Solicitação Processada");
-            alert.setContentText(tipoSolicitacao + " processada com sucesso!\nNº Pedido: " + numeroPedidoField.getText());
-            alert.showAndWait();
+            alertInfo(tipo + " processada com sucesso!");
 
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erro");
-            alert.setHeaderText("Erro ao processar solicitação");
-            alert.setContentText("Ocorreu um erro ao processar a solicitação.");
-            alert.showAndWait();
+            alertError("Erro ao processar.");
         }
     }
 
     @FXML
     private void cancelarSolicitacao() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmação");
-        alert.setHeaderText("Cancelar Solicitação");
-        alert.setContentText("Tem certeza que deseja cancelar esta solicitação?");
+        if (!alertConfirm("Cancelar esta solicitação?")) return;
 
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                motivoField.clear();
-                numeroPedidoField.clear();
-                observacoesArea.clear();
-                dataTrocaField.setValue(LocalDate.now());
-                trocaRadio.setSelected(false);
-                devolucaoRadio.setSelected(false);
+        motivoField.clear();
+        numeroPedidoField.clear();
+        observacoesArea.clear();
+        dataTrocaField.setValue(LocalDate.now());
+        trocaRadio.setSelected(false);
+        devolucaoRadio.setSelected(false);
 
-                Alert info = new Alert(Alert.AlertType.INFORMATION);
-                info.setTitle("Sucesso");
-                info.setHeaderText(null);
-                info.setContentText("Solicitação cancelada com sucesso!");
-                info.showAndWait();
-            }
-        });
+        alertInfo("Solicitação cancelada.");
+    }
+
+    // ------------------------
+    // Métodos utilitários
+    // ------------------------
+
+    private void alertInfo(String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
+    }
+
+    private void alertWarn(String msg) {
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
+    }
+
+    private void alertError(String msg) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setHeaderText("Erro");
+        a.setContentText(msg);
+        a.showAndWait();
+    }
+
+    private boolean alertConfirm(String msg) {
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        return a.showAndWait().filter(b -> b == ButtonType.OK).isPresent();
     }
 
     @FXML
     private void buscarPedido() {
         String numeroPedido = numeroPedidoField.getText();
-        if (numeroPedido.isEmpty()) {
+
+        if (numeroPedido == null || numeroPedido.isBlank()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Atenção");
-            alert.setHeaderText(null);
-            alert.setContentText("Informe o número do pedido.");
+            alert.setTitle("Aviso");
+            alert.setHeaderText("Número do pedido vazio");
+            alert.setContentText("Digite um número de pedido para buscar.");
             alert.showAndWait();
             return;
         }
 
+        // Apenas simulação de busca (tira o erro e funciona na UI)
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Busca Concluída");
-        alert.setHeaderText(null);
-        alert.setContentText("Pedido #" + numeroPedido + " localizado com sucesso!");
+        alert.setTitle("Busca de Pedido");
+        alert.setHeaderText("Resultado da busca");
+        alert.setContentText("Pedido '" + numeroPedido + "' localizado!");
         alert.showAndWait();
     }
+
 }

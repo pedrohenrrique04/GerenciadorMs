@@ -1,24 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.ToggleGroup?>
 
-<BorderPane xmlns="http://javafx.com/javafx/18"
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.trocadevolucao.controller.TrocaDevolucaoController"
             style="-fx-background-color: #f4f4f4;">
@@ -62,10 +49,14 @@
                         <Separator />
 
                         <Label text="Tipo de Operação" style="-fx-font-weight: bold; -fx-font-size: 14;" />
-                        <HBox spacing="15">
+
+                        <fx:define>
                             <ToggleGroup fx:id="tipoSolicitacaoGroup" />
-                            <RadioButton fx:id="trocaRadio" text="Troca" toggleGroup="$tipoSolicitacaoGroup" />
-                            <RadioButton fx:id="devolucaoRadio" text="Devolução" toggleGroup="$tipoSolicitacaoGroup" />
+                        </fx:define>
+
+                        <HBox spacing="15">
+                            <RadioButton fx:id="trocaRadio" text="Troca" toggleGroup="${tipoSolicitacaoGroup}" />
+                            <RadioButton fx:id="devolucaoRadio" text="Devolução" toggleGroup="${tipoSolicitacaoGroup}" />
                         </HBox>
 
                         <Label text="Motivo:" style="-fx-font-weight: bold; -fx-font-size: 14;" />
