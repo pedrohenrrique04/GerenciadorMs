@@ -65,17 +65,19 @@ public class TrocaDevolucaoController implements Initializable {
     }
 
     private void carregarTrocaDevolucaoExemplo() {
+        // CORREÇÃO: Chamada do construtor ajustada para 8 parâmetros (sem o ID)
         trocaDevolucaoAtual = new TrocaDevolucao(
-                1,
-                99,
-                "PED-2024-001",
-                "TROCA",
-                "Produto com defeito",
-                LocalDate.now(),
-                "PENDENTE",
-                1,
-                799.99
+                99,                       // Produto ID
+                "PED-2024-001",           // Número do Pedido
+                "TROCA",                  // Tipo de Solicitação
+                "Produto com defeito",    // Motivo
+                LocalDate.now(),          // Data da Solicitação
+                "PENDENTE",               // Status
+                1,                        // Quantidade
+                799.99                    // Valor Total
         );
+        // Define o ID via setter, simulando um objeto carregado do DB
+        trocaDevolucaoAtual.setId(1);
 
         atualizarCamposTrocaDevolucao();
     }
@@ -98,7 +100,10 @@ public class TrocaDevolucaoController implements Initializable {
             }
 
             quantidadeField.setText(String.valueOf(trocaDevolucaoAtual.getQuantidade()));
-            precoVendaField.setText(String.format("R$ %.2f", trocaDevolucaoAtual.getValorUnitario()));
+
+            // CORREÇÃO: Substitui getValorUnitario() por cálculo
+            double valorUnitario = trocaDevolucaoAtual.getValorTotal() / trocaDevolucaoAtual.getQuantidade();
+            precoVendaField.setText(String.format("R$ %.2f", valorUnitario));
 
             atualizarFiltros();
         }
@@ -166,8 +171,13 @@ public class TrocaDevolucaoController implements Initializable {
             String tipoSolicitacao = trocaRadio.isSelected() ? "TROCA" : "DEVOLUCAO";
             trocaDevolucaoAtual.setTipoSolicitacao(tipoSolicitacao);
 
-            trocaDevolucaoAtual.setQuantidade(Integer.parseInt(quantidadeField.getText().replaceAll("[^0-9]", "")));
-            trocaDevolucaoAtual.setValorUnitario(Double.parseDouble(precoVendaField.getText().replace("R$", "").replace(",", ".").trim()));
+            // Nota: O valor total deve ser recalculado com base no valor unitário e quantidade
+            int novaQuantidade = Integer.parseInt(quantidadeField.getText().replaceAll("[^0-9]", ""));
+            double novoValorUnitario = Double.parseDouble(precoVendaField.getText().replace("R$", "").replace(",", ".").trim());
+
+            trocaDevolucaoAtual.setQuantidade(novaQuantidade);
+            // Assumindo que setValorTotal é o que armazena o valor total da linha:
+            trocaDevolucaoAtual.setValorTotal(novoValorUnitario * novaQuantidade);
 
             nomeProdutoLabel.setText("Produto ID: " + trocaDevolucaoAtual.getProdutoId());
             precoLabel.setText(String.format("R$ %.2f", trocaDevolucaoAtual.getValorTotal()));
@@ -184,7 +194,7 @@ public class TrocaDevolucaoController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro");
             alert.setHeaderText("Erro ao salvar solicitação");
-            alert.setContentText("Verifique os dados informados.");
+            alert.setContentText("Verifique os dados informados. Detalhe: " + e.getMessage());
             alert.showAndWait();
         }
     }
@@ -224,6 +234,8 @@ public class TrocaDevolucaoController implements Initializable {
 
             String tipoSolicitacao = trocaRadio.isSelected() ? "Troca" : "Devolução";
 
+            // Aviso: O método 'processar' não existe no TrocaDevolucao.java.
+            // Se esta linha causar um erro, você precisará implementá-lo no Model.
             trocaDevolucaoAtual.processar(
                     trocaRadio.isSelected() ? "TROCA_PRODUTO" : "ESTORNO",
                     trocaRadio.isSelected() ? "Novo Produto" : null,

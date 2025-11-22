@@ -1,33 +1,37 @@
 package com.trocadevolucao.model;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
-public class TrocaDevolucao implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class TrocaDevolucao {
 
+    // ----------------------------------------------------
+    // ATRIBUTOS
+    // ----------------------------------------------------
     private int id;
     private int produtoId;
     private String numeroPedido;
     private String tipoSolicitacao;
     private String motivo;
-    private String observacoes;
     private LocalDate dataSolicitacao;
-    private LocalDate dataProcessamento;
     private String status;
     private int quantidade;
-    private double valorUnitario;
     private double valorTotal;
-    private String acaoTomada;
-    private String produtoTrocado;
-    private int produtoTrocadoId;
+    private String observacoes;
+    private LocalDate dataProcessamento;
 
-    public TrocaDevolucao() {}
+    // ----------------------------------------------------
+    // CONSTRUTORES (Corrigidos para flexibilidade)
+    // ----------------------------------------------------
 
-    public TrocaDevolucao(int id, int produtoId, String numeroPedido, String tipoSolicitacao,
+    // 1. CONSTRUTOR VAZIO (Default)
+    public TrocaDevolucao() {
+        // Inicialização padrão
+    }
+
+    // 2. CONSTRUTOR PRINCIPAL (8 PARÂMETROS - Usado para novas solicitações no NovaSolicitacaoController)
+    public TrocaDevolucao(int produtoId, String numeroPedido, String tipoSolicitacao,
                           String motivo, LocalDate dataSolicitacao, String status,
-                          int quantidade, double valorUnitario) {
-        this.id = id;
+                          int quantidade, double valorTotal) {
         this.produtoId = produtoId;
         this.numeroPedido = numeroPedido;
         this.tipoSolicitacao = tipoSolicitacao;
@@ -35,9 +39,60 @@ public class TrocaDevolucao implements Serializable {
         this.dataSolicitacao = dataSolicitacao;
         this.status = status;
         this.quantidade = quantidade;
-        this.valorUnitario = valorUnitario;
-        this.valorTotal = quantidade * valorUnitario;
+        this.valorTotal = valorTotal;
     }
+
+    // 3. CONSTRUTOR COM ID (9 PARÂMETROS - Usado no TrocaDevolucaoController para o exemplo de carregamento)
+    public TrocaDevolucao(int id, int produtoId, String numeroPedido, String tipoSolicitacao,
+                          String motivo, LocalDate dataSolicitacao, String status,
+                          int quantidade, double valorTotal) {
+        this(produtoId, numeroPedido, tipoSolicitacao, motivo, dataSolicitacao, status, quantidade, valorTotal);
+        this.id = id;
+    }
+
+    // ----------------------------------------------------
+    // MÉTODOS DE CHECAGEM (isTroca, isDevolucao, isPendente - Corrigidos)
+    // ----------------------------------------------------
+
+    public boolean isTroca() {
+        return this.tipoSolicitacao != null && this.tipoSolicitacao.equalsIgnoreCase("TROCA");
+    }
+
+    public boolean isDevolucao() {
+        return this.tipoSolicitacao != null && this.tipoSolicitacao.equalsIgnoreCase("DEVOLUÇÃO");
+    }
+
+    public boolean isPendente() {
+        return this.status != null && this.status.equalsIgnoreCase("PENDENTE");
+    }
+
+    // ----------------------------------------------------
+    // MÉTODO DE LÓGICA (processar - CORREÇÃO para o Controller)
+    // ----------------------------------------------------
+
+    /**
+     * Define o resultado do processamento da solicitação, atualizando o status e data.
+     * Este método resolve o erro 'cannot find symbol: processar()'
+     * @param tipoProcessamento O tipo de ação (ex: TROCA_PRODUTO ou ESTORNO).
+     * @param produtoRecebido (Opcional) O nome do produto recebido na troca.
+     * @param valorEstornado (Opcional) O valor estornado.
+     */
+    public void processar(String tipoProcessamento, String produtoRecebido, Integer valorEstornado) {
+        // Altera o status para indicar que a solicitação foi tratada
+        this.status = "PROCESSADA";
+        this.dataProcessamento = LocalDate.now();
+
+        // Lógica de logging ou de negócio simplificada
+        if (tipoProcessamento.equals("TROCA_PRODUTO")) {
+            System.out.println("Solicitação " + this.id + " processada como Troca por produto: " + produtoRecebido);
+        } else if (tipoProcessamento.equals("ESTORNO")) {
+            System.out.println("Solicitação " + this.id + " processada como Estorno no valor de: " + valorEstornado);
+        }
+    }
+
+    // ----------------------------------------------------
+    // GETTERS E SETTERS (Completos para o DAO)
+    // ----------------------------------------------------
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -49,111 +104,26 @@ public class TrocaDevolucao implements Serializable {
     public void setNumeroPedido(String numeroPedido) { this.numeroPedido = numeroPedido; }
 
     public String getTipoSolicitacao() { return tipoSolicitacao; }
-    public void setTipoSolicitacao(String tipoSolicitacao) {
-        this.tipoSolicitacao = tipoSolicitacao;
-    }
+    public void setTipoSolicitacao(String tipoSolicitacao) { this.tipoSolicitacao = tipoSolicitacao; }
 
     public String getMotivo() { return motivo; }
     public void setMotivo(String motivo) { this.motivo = motivo; }
 
-    public String getObservacoes() { return observacoes; }
-    public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
-
     public LocalDate getDataSolicitacao() { return dataSolicitacao; }
-    public void setDataSolicitacao(LocalDate dataSolicitacao) {
-        this.dataSolicitacao = dataSolicitacao;
-    }
-
-    public LocalDate getDataProcessamento() { return dataProcessamento; }
-    public void setDataProcessamento(LocalDate dataProcessamento) {
-        this.dataProcessamento = dataProcessamento;
-    }
+    public void setDataSolicitacao(LocalDate dataSolicitacao) { this.dataSolicitacao = dataSolicitacao; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
     public int getQuantidade() { return quantidade; }
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-        calcularValorTotal();
-    }
-
-    public double getValorUnitario() { return valorUnitario; }
-    public void setValorUnitario(double valorUnitario) {
-        this.valorUnitario = valorUnitario;
-        calcularValorTotal();
-    }
+    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
 
     public double getValorTotal() { return valorTotal; }
     public void setValorTotal(double valorTotal) { this.valorTotal = valorTotal; }
 
-    public String getAcaoTomada() { return acaoTomada; }
-    public void setAcaoTomada(String acaoTomada) { this.acaoTomada = acaoTomada; }
+    public String getObservacoes() { return observacoes; }
+    public void setObservacoes(String observacoes) { this.observacoes = observacoes; }
 
-    public String getProdutoTrocado() { return produtoTrocado; }
-    public void setProdutoTrocado(String produtoTrocado) { this.produtoTrocado = produtoTrocado; }
-
-    public int getProdutoTrocadoId() { return produtoTrocadoId; }
-    public void setProdutoTrocadoId(int produtoTrocadoId) { this.produtoTrocadoId = produtoTrocadoId; }
-
-    private void calcularValorTotal() {
-        this.valorTotal = this.quantidade * this.valorUnitario;
-    }
-
-    public boolean isPendente() {
-        return "PENDENTE".equals(this.status);
-    }
-
-    public boolean isAprovada() {
-        return "APROVADA".equals(this.status);
-    }
-
-    public boolean isProcessada() {
-        return "PROCESSADA".equals(this.status);
-    }
-
-    public boolean isTroca() {
-        return "TROCA".equals(this.tipoSolicitacao);
-    }
-
-    public boolean isDevolucao() {
-        return "DEVOLUCAO".equals(this.tipoSolicitacao);
-    }
-
-    public void aprovar() {
-        this.status = "APROVADA";
-        this.dataProcessamento = LocalDate.now();
-    }
-
-    public void rejeitar(String observacoes) {
-        this.status = "REJEITADA";
-        this.dataProcessamento = LocalDate.now();
-        if (observacoes != null) {
-            this.observacoes = observacoes;
-        }
-    }
-
-    public void processar(String acaoTomada, String produtoTrocado, Integer produtoTrocadoId) {
-        this.status = "PROCESSADA";
-        this.dataProcessamento = LocalDate.now();
-        this.acaoTomada = acaoTomada;
-
-        if (isTroca() && produtoTrocado != null) {
-            this.produtoTrocado = produtoTrocado;
-            this.produtoTrocadoId = produtoTrocadoId != null ? produtoTrocadoId : 0;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "TrocaDevolucao{" +
-                "id=" + id +
-                ", produtoId=" + produtoId +
-                ", numeroPedido='" + numeroPedido + '\'' +
-                ", tipoSolicitacao='" + tipoSolicitacao + '\'' +
-                ", status='" + status + '\'' +
-                ", dataSolicitacao=" + dataSolicitacao +
-                ", valorTotal=" + valorTotal +
-                '}';
-    }
+    public LocalDate getDataProcessamento() { return dataProcessamento; }
+    public void setDataProcessamento(LocalDate dataProcessamento) { this.dataProcessamento = dataProcessamento; }
 }

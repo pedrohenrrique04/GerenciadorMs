@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane prefHeight="550.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.trocadevolucao.controller.NovaSolicitacaoController">
+    <VBox spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+
+        <Label style="-fx-font-size: 20; -fx-font-weight: bold;" text="Troca / Devolução" />
+
+        <GridPane hgap="30.0" vgap="15.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="45.0" />
+                <ColumnConstraints percentWidth="55.0" />
+            </columnConstraints>
+
+            <VBox spacing="15.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Dados da Venda" />
+                <TextField fx:id="campoIdVenda" promptText="ID da Venda" />
+                <TextField fx:id="campoIdCliente" promptText="ID do Cliente" /> <Button fx:id="btnBuscarVenda" mnemonicParsing="false" onAction="#buscarVenda" text="Buscar Venda" />
+
+                <Separator />
+
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Tipo de Operação" />
+                <HBox spacing="10.0">
+                    <RadioButton fx:id="radioTroca" mnemonicParsing="false" text="Troca">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="tipoOperacaoGroup" />
+                        </toggleGroup>
+                    </RadioButton>
+                    <RadioButton fx:id="radioDevolucao" mnemonicParsing="false" text="Devolução" toggleGroup="$tipoOperacaoGroup" />
+                </HBox>
+
+                <HBox spacing="10.0">
+                    <Button fx:id="btnNovoProduto" mnemonicParsing="false" onAction="#adicionarNovoProduto" text="Novo Produto" />
+                    <Button fx:id="btnDiferencaValor" mnemonicParsing="false" onAction="#calcularDiferencaValor" text="Diferença de Valor" />
+                </HBox>
+
+                <Separator />
+
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Forma de Reembolso" />
+                <HBox spacing="10.0">
+                    <RadioButton fx:id="radioPix" mnemonicParsing="false" text="Pix">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="reembolsoGroup" />
+                        </toggleGroup>
+                    </RadioButton>
+                    <RadioButton fx:id="radioDinheiro" mnemonicParsing="false" text="Dinheiro" toggleGroup="$reembolsoGroup" />
+                </HBox>
+
+            </VBox>
+
+            <VBox spacing="15.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Produtos Selecionados" />
+                <TableView fx:id="tabelaProdutos" prefHeight="200.0">
+                    <columns>
+                        <TableColumn text="Produto" prefWidth="150" />
+                        <TableColumn text="Quantidade" prefWidth="80" />
+                        <TableColumn text="Valor Unitário" prefWidth="100" />
+                        <TableColumn text="Total" prefWidth="100" />
+                    </columns>
+                </TableView>
+
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16;" text="Observações" />
+                <TextArea fx:id="campoObservacoes" prefHeight="80.0" />
+            </VBox>
+        </GridPane>
+
+        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cancelar" text="Cancelar" style="-fx-background-color: #666666; -fx-text-fill: white;"/>
+            <Button fx:id="btnConfirmar" mnemonicParsing="false" onAction="#confirmarTrocaDevolucao" text="Confirmar Troca/Devolução" style="-fx-background-color: #0EA5E9; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>

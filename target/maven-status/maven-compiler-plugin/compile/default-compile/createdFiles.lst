@@ -1,4 +1,9 @@
-com\trocadevolucao\controller\TrocaDevolucaoController.class
+com\trocadevolucao\View\main.class
+com\trocadevolucao\dao\TrocaDevolucaoDAOImpl.class
 com\trocadevolucao\model\TrocaDevolucao.class
+com\trocadevolucao\dao\DBConnection.class
+com\trocadevolucao\controller\TrocaDevolucaoController.class
 module-info.class
-com\trocadevolucao\main.class
+com\trocadevolucao\dao\TrocaDevolucaoDAO.class
+com\trocadevolucao\controller\NovaSolicitacaoController.class
+com\trocadevolucao\controller\SolicitacaoController.class
