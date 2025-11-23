@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/18"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.produtos.controller.ProdutoController"
+            style="-fx-background-color: white;">
+
+    <top>
+        <Label text="PRODUTOS" style="-fx-font-weight: bold; -fx-font-size: 24;">
+            <padding>
+                <Insets top="20" bottom="20" left="20" />
+            </padding>
+        </Label>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.3" BorderPane.alignment="CENTER">
+
+            <!-- Painel de filtros -->
+            <VBox spacing="20" style="-fx-background-color: #f8f9fa;">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20" />
+                </padding>
+
+                <Label text="Filtro" style="-fx-font-weight: bold; -fx-font-size: 16;" />
+
+                <!-- Categoria -->
+                <VBox spacing="10">
+                    <Label text="Categoria" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                    <CheckBox fx:id="roupasCheck" text="Roupas +" />
+                    <CheckBox fx:id="calcadosCheck" text="Calçados +" />
+                    <CheckBox fx:id="acessoriosCheck" text="Acessórios +" />
+                </VBox>
+
+                <!-- Gênero -->
+                <VBox spacing="10">
+                    <Label text="Gênero" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                    <RadioButton fx:id="masculinoRadio" text="Masculino" />
+                    <RadioButton fx:id="femininoRadio" text="Feminino" />
+                    <RadioButton fx:id="unisexRadio" text="Unissex" />
+                </VBox>
+
+                <!-- Cor -->
+                <VBox spacing="10">
+                    <Label text="Cor" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                    <CheckBox fx:id="brancoCheck" text="Branco" />
+                    <CheckBox fx:id="pretoCheck" text="Preto" />
+                    <CheckBox fx:id="verdeCheck" text="Verde" />
+                </VBox>
+
+                <Separator />
+            </VBox>
+
+            <!-- Painel Principal -->
+            <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
+
+                <!-- Aba Visualização -->
+                <Tab text="Visualização">
+                    <VBox spacing="20" alignment="TOP_CENTER">
+                        <padding>
+                            <Insets top="40" right="40" bottom="40" left="40" />
+                        </padding>
+
+                        <StackPane style="-fx-background-color: #e9ecef; -fx-border-color: #dee2e6; -fx-border-width: 1;"
+                                   prefWidth="300" prefHeight="200">
+                            <Label text="Imagem do Produto" style="-fx-text-fill: #6c757d;" />
+                        </StackPane>
+
+                        <Label fx:id="nomeProdutoLabel"
+                               text="Tênis Nike Air Force 1 '07 Masculino"
+                               style="-fx-font-weight: bold; -fx-font-size: 18;"
+                               wrapText="true" maxWidth="300" />
+
+                        <Label fx:id="precoLabel" text="R$ 799,99"
+                               style="-fx-font-weight: bold; -fx-font-size: 16; -fx-text-fill: #28a745;" />
+
+                        <Button text="COMPRAR" onAction="#comprarProduto"
+                                style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold;"
+                                prefWidth="150" />
+                    </VBox>
+                </Tab>
+
+                <!-- Aba Detalhes -->
+                <Tab text="Detalhes">
+                    <VBox spacing="15" style="-fx-background-color: #f8f9fa;">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20" />
+                        </padding>
+
+                        <Label text="Tênis Nike Air Fort Masculino" style="-fx-font-weight: bold; -fx-font-size: 18;" />
+                        <Label fx:id="idLabel" text="99"
+                               style="-fx-font-weight: bold; -fx-font-size: 14; -fx-text-fill: #6c757d;" />
+
+                        <Separator />
+
+                        <GridPane vgap="10" hgap="10">
+                            <padding>
+                                <Insets top="10" bottom="10" />
+                            </padding>
+
+                            <columnConstraints>
+                                <ColumnConstraints prefWidth="120" />
+                                <ColumnConstraints prefWidth="250" />
+                            </columnConstraints>
+
+                            <Label text="Nome:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                            <TextField fx:id="nomeField" text="Tênis Nike Air Force 1 '07 Masculino"
+                                       GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+                            <Label text="Quantidade:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                            <TextField fx:id="quantidadeField" text="99"
+                                       GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+                            <Label text="Preço custo:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                            <TextField fx:id="precoCustoField" text="R$ 9,99"
+                                       GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+                            <Label text="Preço venda:" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                            <TextField fx:id="precoVendaField" text="R$ 9,99"
+                                       GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+                            <Label text="Data entrada:" style="-fx-font-weight: bold;" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                            <TextField fx:id="dataEntradaField" text="13/11/2024"
+                                       GridPane.rowIndex="4" GridPane.columnIndex="1" />
+
+                            <Label text="Data reposição:" style="-fx-font-weight: bold;" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+                            <TextField fx:id="dataReposicaoField"
+                                       GridPane.rowIndex="5" GridPane.columnIndex="1" />
+                        </GridPane>
+
+                        <Separator />
+
+                        <VBox spacing="10">
+                            <Label text="Descrição:" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+                            <HBox spacing="10">
+                                <Button fx:id="excluirBtn" text="Excluir" prefWidth="80" />
+                                <Button fx:id="editarBtn" text="Editar" prefWidth="80" />
+                                <Button fx:id="salvarBtn" text="Salvar" prefWidth="80" />
+                            </HBox>
+                        </VBox>
+
+                    </VBox>
+                </Tab>
+
+            </TabPane>
+        </SplitPane>
+    </center>
+</BorderPane>
