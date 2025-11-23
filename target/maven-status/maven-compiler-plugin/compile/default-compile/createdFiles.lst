@@ -1,15 +1,11 @@
 controller\RelatoriosProdutosController.class
+Test\TesteRelatorioDao.class
+util\Conexao.class
 Test\Test.class
 Model\Usuario.class
 controller\RelatoriosController.class
 Test\TesteUsuarioDAO.class
-view\LoginView$2.class
-view\LoginView.class
-Test\TesteRelatorioDao.class
-controller\UsuarioController.class
-view\LoginView$1.class
 Test\TesteConexao.class
 view\Main.class
 Dao\RelatoriosDao.class
 Dao\UsuarioDAO.class
-util\Conexao.class
