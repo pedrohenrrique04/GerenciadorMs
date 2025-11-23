@@ -1,57 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import com.jfoenix.controls.JFXHamburger?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.layout.StackPane?>
-<?import com.jfoenix.controls.JFXDrawer?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
-<BorderPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controller.RelatoriosProdutosController"
-            prefWidth="1280" prefHeight="720">
-<top>
-    <AnchorPane prefHeight="70" prefWidth="1280" style="-fx-background-color: #0F172A;">
-        <children>
-            <JFXHamburger fx:id="h2" layoutX="20" layoutY="15" prefHeight="40" prefWidth="40" />
-            <Label layoutX="570.0" layoutY="20.0" text="Relatórios" textFill="white">
-                <font><Font name="Georgia Bold" size="26"/></font>
-            </Label>
-        </children>
-    </AnchorPane>
-</top>
+<BorderPane prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RelatoriosProdutosController">
+    <top>
+        <AnchorPane prefHeight="70" prefWidth="1280" style="-fx-background-color: #0F172A;">
+            <children>
+                <JFXHamburger fx:id="h2" layoutX="20" layoutY="15" prefHeight="40" prefWidth="40" />
+                <Label layoutX="570.0" layoutY="20.0" text="Relatórios" textFill="white">
+                    <font><Font name="Georgia Bold" size="26" /></font>
+                </Label>
+            </children>
+        </AnchorPane>
+    </top>
 
     <center>
         <StackPane>
-            <JFXDrawer fx:id="drawer02"
-                       defaultDrawerSize="240"
-                       overLayVisible="true"
-                       prefHeight="1080"
-                       prefWidth="240"
-                       resizableOnDrag="false"/>
-            <AnchorPane fx:id="mainContent02" style="-fx-background-color: #F7F7F7;">
+            <JFXDrawer fx:id="drawer02" defaultDrawerSize="240" overLayVisible="true" prefHeight="1080" prefWidth="240" resizableOnDrag="false">
                 <children>
-                    <Label layoutX="30.0" layoutY="21.0" text="Tipo de relatório">
-                        <font><Font name="System Bold" size="12.0"/></font>
-                    </Label>
-                    <ComboBox fx:id="comboOpcoes02" layoutX="20.0" layoutY="40.0" prefWidth="160"
-                              promptText="Produtos"
-                              style="-fx-background-radius: 8; -fx-background-color: #E0E0E0;">
+                    <AnchorPane fx:id="mainContent02" style="-fx-background-color: #F7F7F7;">
+                        <children>
 
-                        <items>
-                            <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Vendas"/>
-                                <String fx:value="Produtos"/>
-                            </FXCollections>
-                        </items>
-                    </ComboBox>
-                </children>
-            </AnchorPane>
+                            <!-- ======================== FILTROS ======================== -->
+                            <Label layoutX="30" layoutY="21" text="Tipo de relatório">
+                                <font>
+                                    <Font name="System Bold" size="12" />
+                                </font>
+                            </Label>
+
+                            <ComboBox fx:id="comboOpcoes02" layoutX="20" layoutY="40" prefWidth="160" promptText="Produtos" style="-fx-background-radius: 8; -fx-background-color: #E0E0E0;">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Vendas" />
+                                        <String fx:value="Produtos" />
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+
+                            <Label layoutX="260" layoutY="21" text="Categoria">
+                                <font>
+                                    <Font name="System Bold" size="12" />
+                                </font>
+                            </Label>
+
+                            <ComboBox fx:id="comboCategoria" layoutX="250" layoutY="40" prefWidth="160" promptText="Categoria" style="-fx-background-radius: 8; -fx-background-color: #E0E0E0;">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="roupas" />
+                                        <String fx:value="calçados" />
+                                        <String fx:value="acessorios" />
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+
+                            <!-- Botões Exportar -->
+                            <!--<Button fx:id="btnExportarPDF" text="Exportar PDF"
+                                    layoutX="600" layoutY="40" prefWidth="160"
+                                    style="-fx-background-color: #D0D0D0; -fx-background-radius: 8;" />
+
+                            <Button fx:id="btnExportarExcel" text="Exportar Excel"
+                                    layoutX="770" layoutY="40" prefWidth="160"
+                                    style="-fx-background-color: #D0D0D0; -fx-background-radius: 8;" />-->
+
+                            <!-- ======================== CARDS ======================== -->
+                            <!-- ESTOQUE ATUAL -->
+                            <AnchorPane layoutX="145.0" layoutY="100.0" prefHeight="100" prefWidth="210.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #D3D3D3;">
+                                <children>
+
+                                    <!-- Título -->
+                                    <Label fx:id="labelEstoqueTotal" layoutX="59.0" layoutY="40.0" text="Estoque Atual">
+                                        <font><Font name="System Bold" size="14" /></font>
+                                    </Label>
+
+                                    <!-- Total de itens
+                                    <Label fx:id="labelTotalItens" layoutX="20" layoutY="40"
+                                           style="-fx-font-size: 24; -fx-font-weight: bold;"
+                                           text="0 itens" />-->
+
+                                    <!-- Status
+                                    <Label fx:id="labelStatusEstoque" layoutX="20" layoutY="70"
+                                           style="-fx-text-fill: #2E8B57; -fx-font-size: 12;"
+                                           text="Carregando..." />-->
+
+                                </children>
+                            </AnchorPane>
+
+
+                            <!-- PRODUTOS EM ESTOQUE MÍNIMO -->
+                            <AnchorPane layoutX="514.0" layoutY="100.0" prefHeight="220.0" prefWidth="739.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #D3D3D3;">
+                                <children>
+                                    <Label layoutX="20" layoutY="20" text="Produtos em Estoque Mínimo" />
+                                    <Label layoutX="180" layoutY="40" style="-fx-font-size: 28; -fx-text-fill: #FF4A4A;" text="⚠" />
+                                </children>
+                            </AnchorPane>
+
+                            <!-- PRODUTOS PARADOS -->
+                            <AnchorPane layoutX="18.0" layoutY="220.0" prefHeight="100" prefWidth="466.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #D3D3D3;">
+                                <children>
+                                    <Label layoutX="155.0" layoutY="41.0" text="Produtos Parados (sem saída)" />
+                                </children>
+                            </AnchorPane>
+
+                            <!-- ======================== GRÁFICO ======================== -->
+                            <!--<BarChart fx:id="graficoMovimentacao" layoutX="500" layoutY="100" prefHeight="260" prefWidth="740">
+                                <xAxis>
+                                    <CategoryAxis label="Movimentação" />
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Quantidade" />
+                                </yAxis>
+                            </BarChart>-->
+
+                            <!-- ======================== TABELA ======================== -->
+                            <TableView fx:id="tableRelatorios" layoutX="20" layoutY="380" prefHeight="300" prefWidth="1220">
+                                <columns>
+
+                                    <TableColumn prefWidth="150" text="Produto" />
+                                    <TableColumn prefWidth="100" text="Categoria" />
+                                    <TableColumn prefWidth="120" text="Qnt. Disponível" />
+                                    <TableColumn prefWidth="140" text="Estoque Disponível" />
+                                    <TableColumn prefWidth="120" text="Última Venda" />
+                                    <TableColumn prefWidth="100" text="Preço Unit" />
+                                    <TableColumn prefWidth="100" text="Preço Vend" />
+                                    <TableColumn prefWidth="90" text="Lucro Unit" />
+
+                                </columns>
+                            </TableView>
+
+                        </children>
+
+                    </AnchorPane>
+                </children></JFXDrawer>
         </StackPane>
 
     </center>
