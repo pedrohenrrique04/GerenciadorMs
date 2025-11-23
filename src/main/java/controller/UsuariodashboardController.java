@@ -1,12 +1,10 @@
 package controller;
 
 import Model.Usuariodashboard;
-
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.*; // Importa TextField, PasswordField, ComboBox, Alert, etc.
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -19,55 +17,62 @@ public class UsuariodashboardController {
     private TextField campoNome;
 
     @FXML
-    private TextField campoSenha;
+    private PasswordField campoSenha; // CORREÇÃO: Usar PasswordField para senhas
 
     @FXML
     private ComboBox<String> comboFuncoes;
 
-    // LISTA AGORA DO TIPO CORRETO
-    private ObservableList<Usuariodashboard> listaDeUsuarios =
-            FXCollections.observableArrayList();
+    // Lista temporária (apenas na memória)
+    private ObservableList<Usuariodashboard> listaDeUsuarios = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-
-        comboFuncoes.getItems().setAll(
-                "Administrador",
-                "Funcionario"
-        );
+        // Inicializa o ComboBox
+        comboFuncoes.getItems().setAll("Administrador", "Funcionario");
         comboFuncoes.getSelectionModel().selectFirst();
+
+        // DICA: Aqui você chamaria o banco para carregar usuários existentes
+        // carregarUsuariosDoBanco();
     }
 
     // =====================================================
     // SALVAR
     // =====================================================
-
     @FXML
     private void handleSalvarNovoUsuario() {
-
         String nome = campoNome.getText();
         String senha = campoSenha.getText();
         String funcao = comboFuncoes.getValue();
 
+        // Validação
         if (nome.isEmpty() || senha.isEmpty() || funcao == null) {
             alert("Preencha todos os campos!");
             return;
         }
 
-        // CRIANDO O MODELO CORRETO
+        // 1. Cria o objeto Modelo
         Usuariodashboard user = new Usuariodashboard(nome, senha, funcao);
+
+        // ---------------------------------------------------------
+        // ⚠ AQUI ENTRARIA A CONEXÃO COM O BANCO DE DADOS (DAO)
+        // Exemplo:
+        // UsuarioDAO dao = new UsuarioDAO();
+        // dao.salvar(user);
+        // ---------------------------------------------------------
+
+        // 2. Adiciona na lista visual (para aparecer na tela agora)
         listaDeUsuarios.add(0, user);
 
+        // 3. Atualiza a tela e limpa os campos
         renderizarLista();
         handleLimparFormulario();
 
-        alert("Usuário salvo com sucesso!");
+        alert("Usuário salvo com sucesso! (Apenas na memória)");
     }
 
     // =====================================================
     // LIMPAR
     // =====================================================
-
     @FXML
     private void handleLimparFormulario() {
         campoNome.clear();
@@ -76,13 +81,13 @@ public class UsuariodashboardController {
     }
 
     // =====================================================
-    // RENDERIZAR LISTA
+    // RENDERIZAR LISTA (VISUAL)
     // =====================================================
-
     private void renderizarLista() {
         listaUsuariosContainer.getChildren().clear();
 
         for (Usuariodashboard u : listaDeUsuarios) {
+            // Cria o cartão visual para cada usuário
             VBox card = new VBox(5);
             card.setStyle(
                     "-fx-padding: 15;" +
@@ -93,7 +98,11 @@ public class UsuariodashboardController {
             );
 
             Label lblNome = new Label(u.getNome());
-            Label lblInfo = new Label(u.getSenha() + " • " + u.getTipo());
+            lblNome.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+            // Dica: Não é seguro mostrar a senha na lista, mas mantive como você fez
+            Label lblInfo = new Label(u.getTipo());
+            lblInfo.setStyle("-fx-text-fill: #64748B;");
 
             card.getChildren().addAll(lblNome, lblInfo);
 
@@ -101,10 +110,6 @@ public class UsuariodashboardController {
             listaUsuariosContainer.getChildren().add(card);
         }
     }
-
-    // =====================================================
-    // ALERTA
-    // =====================================================
 
     private void alert(String msg) {
         Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);

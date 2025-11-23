@@ -11,9 +11,8 @@ public class HelloApplication extends Application {
 
         System.out.println("CARREGANDO: " + HelloApplication.class.getResource("/view/hello-view.fxml"));
 
-        // CARREGA O DASHBOARD CORRETO
         FXMLLoader fxmlLoader = new FXMLLoader(
-                HelloApplication.class.getResource("/view/dashboard-content-view.fxml")
+                HelloApplication.class.getResource("/view/hello-view.fxml")
         );
 
         Scene scene = new Scene(fxmlLoader.load());
