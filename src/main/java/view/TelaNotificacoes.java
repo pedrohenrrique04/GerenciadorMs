@@ -45,9 +45,13 @@ public class TelaNotificacoes {
         ObservableList<Notification> notificacoes = service.getAllNotifications();
         listView.setItems(notificacoes);
 
+<<<<<<< HEAD
         listView.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
 
         // 2. Área Principal
+=======
+        // 3. Área Principal (ListView dentro de um VBox para melhor padding)
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
         VBox contentBox = new VBox(10, listView);
         contentBox.setPadding(new Insets(20));
         contentBox.setStyle("-fx-background-color: #f4f7fa;");
@@ -73,7 +77,15 @@ public class TelaNotificacoes {
         subtitle.setFont(Font.font("Arial", 14));
         subtitle.setTextFill(Color.web("#666666"));
 
+<<<<<<< HEAD
         // --- CORREÇÃO DO BINDING REATIVO ---
+=======
+        // --- INÍCIO DA CORREÇÃO DO BINDING ---
+        // 1. Coleta todas as readProperty() em um array de ObservableValue
+        javafx.beans.value.ObservableValue<?>[] readProperties = data.stream()
+                .map(Notification::readProperty)
+                .toArray(javafx.beans.value.ObservableValue[]::new);
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
 
         // O Bindings.createStringBinding espera uma lista de objetos Observable como dependências.
         // Como o NotificationService inicializa a lista 'data' com um PropertyExtractor

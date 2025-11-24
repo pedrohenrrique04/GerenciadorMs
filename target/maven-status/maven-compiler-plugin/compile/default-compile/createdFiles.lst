@@ -1,0 +1,18 @@
+<<<<<<< HEAD
+=======
+controller\RelatoriosProdutosController.class
+Model\VendaMensal.class
+Test\TesteRelatorioDao.class
+Model\Usuario.class
+controller\RelatoriosController.class
+Test\TesteConexao.class
+view\Main.class
+Dao\RelatoriosDao.class
+view\TelaLoginView.class
+controller\TelaLoginController.class
+Model\VendaSemanal.class
+util\Conexao.class
+Test\Test.class
+Test\TesteUsuarioDAO.class
+Dao\UsuarioDAO.class
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)

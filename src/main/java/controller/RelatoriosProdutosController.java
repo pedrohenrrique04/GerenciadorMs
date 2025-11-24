@@ -48,7 +48,7 @@ public class RelatoriosProdutosController implements Initializable {
     @FXML
     private ComboBox<String> comboCategoria;
 
-    // TABELA ESTOQUE M&Iacute;NIMO
+    // TABELA ESTOQUE MÍNIMO
     @FXML private TableView<Produto> tableEstoqueMinimo;
 
     @FXML private TableColumn<Produto, String> colNomeMin;

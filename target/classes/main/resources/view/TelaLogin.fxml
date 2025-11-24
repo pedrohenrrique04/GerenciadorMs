@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.TelaLoginController"
+            prefHeight="720.0" prefWidth="1280.0"
+            style="-fx-background-color: linear-gradient(to bottom, #d4a857, #3c7a8b);">
+
+    <center>
+        <VBox alignment="CENTER" spacing="35"
+              maxWidth="550"
+              style="-fx-background-color: white;
+                     -fx-background-radius: 15;
+                     -fx-padding: 50;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 20, 0.3, 0, 4);">
+
+            <!-- Título -->
+            <Label text="LOGIN DE USUÁRIO"
+                   style="-fx-font-size: 30px;
+                          -fx-font-weight: bold;
+                          -fx-text-fill: #222;" />
+
+            <!-- Campos -->
+            <VBox alignment="CENTER" spacing="25">
+
+                <TextField fx:id="txtUsuario"
+                           promptText="Nome de usuário"
+                           prefHeight="45" prefWidth="420"
+                           style="-fx-background-radius: 10;
+                                  -fx-background-color: #d0d0d0;
+                                  -fx-font-size: 16px;
+                                  -fx-padding: 0 15;" />
+
+                <PasswordField fx:id="txtSenha"
+                               promptText="Senha do usuário"
+                               prefHeight="45" prefWidth="420"
+                               style="-fx-background-radius: 10;
+                                      -fx-background-color: #d0d0d0;
+                                      -fx-font-size: 16px;
+                                      -fx-padding: 0 15;" />
+            </VBox>
+
+            <!-- Botão -->
+            <Button fx:id="btnLogin"
+                    text="Login"
+                    prefWidth="220" prefHeight="50"
+                    style="-fx-background-color: linear-gradient(to right, #d4a857, #3c7a8b);
+                           -fx-background-radius: 10;
+                           -fx-font-size: 18px;
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0.3, 0, 2);" />
+
+        </VBox>
+    </center>
+</BorderPane>

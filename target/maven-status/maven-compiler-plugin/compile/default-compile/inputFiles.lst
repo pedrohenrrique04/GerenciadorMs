@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Test\TesteConexao.java
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\Produto.java
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\Main.java
@@ -34,11 +35,41 @@ C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\Nive
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\util\Conexao.java
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\TelaProdutos.java
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Dao\UsuarioDAO.java
+=======
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\application\HelloApplication.java
-C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\NotificationCell.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\controller\DashboardController.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\controller\RelatoriosController.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\controller\RelatoriosProdutosController.java
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\controller\TelaLoginController.java
-C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\Launcher.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\controller\UsuariodashboardController.java
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\controller\VendaController.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Dao\NotificacaoDAO.java
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Dao\ProdutoDAO.java
+<<<<<<< HEAD
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\util\SessaoUsuario.java
+=======
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Dao\RelatoriosDao.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Dao\UsuarioDAO.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Dao\VendaDAO.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\CartItem.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\Notification.java
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
 C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\NotificationType.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\Produto.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\Usuario.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\Usuariodashboard.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\Venda.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\VendaMensal.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Model\VendaSemanal.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Test\Test.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Test\TesteConexao.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Test\TesteRelatorioDao.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\Test\TesteUsuarioDAO.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\util\Conexao.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\Launcher.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\Main.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\NotificationCell.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\TelaLoginView.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\TelaNotificacoes.java
+C:\Users\duckf\OneDrive\Documentos\GitHub\GerenciadorMs\src\main\java\view\TelaRealizarVenda.java

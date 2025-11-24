@@ -78,9 +78,52 @@ public class TelaRealizarVenda {
         atualizarTotalVenda();
     }
 
+<<<<<<< HEAD
     // Método auxiliar para formatar colunas como moeda R$
     private void configurarFormatacaoMonetaria(TableColumn<CartItem, Double> coluna) {
         coluna.setCellFactory(tc -> new TableCell<CartItem, Double>() {
+=======
+    public BorderPane getTela() {
+        if (produtosDoBanco.isEmpty()) {
+            Label lblErro = new Label("❌ ERRO: Não foi possível carregar os produtos do banco.");
+            lblErro.setTextFill(Color.web(COR_PERIGO));
+            lblErro.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+            BorderPane errorPane = new BorderPane(lblErro);
+            errorPane.setPadding(new Insets(50));
+            return errorPane;
+        }
+
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: " + COR_FUNDO + ";");
+        root.setPadding(new Insets(25));
+
+        Label lblTitulo = new Label("Ponto de Venda");
+        lblTitulo.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        lblTitulo.setTextFill(Color.web(COR_TEXTO_TITULO));
+        BorderPane.setAlignment(lblTitulo, Pos.CENTER_LEFT);
+        BorderPane.setMargin(lblTitulo, new Insets(0, 0, 20, 0));
+        root.setTop(lblTitulo);
+
+        TableView tabelaCarrinho = createCarrinhoTable();
+        VBox.setVgrow(tabelaCarrinho, Priority.ALWAYS);
+        tabelaCarrinho.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-font-size: 13px;");
+        root.setCenter(tabelaCarrinho);
+
+        GridPane painelInferior = criarPainelInferior();
+        root.setBottom(painelInferior);
+
+        return root;
+    }
+
+    private GridPane criarPainelInferior() {
+        GridPane painel = new GridPane();
+        painel.setHgap(20);
+        painel.setPadding(new Insets(20,0,0,0));
+
+        Button btnAdd = new Button("+ Adicionar Produto");
+        btnAdd.setStyle(String.format(ESTILO_BOTAO_PADRAO, COR_PRINCIPAL));
+        btnAdd.setOnAction(new javafx.event.EventHandler<ActionEvent>() {
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
             @Override
             protected void updateItem(Double price, boolean empty) {
                 super.updateItem(price, empty);

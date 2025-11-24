@@ -1,6 +1,7 @@
 package controller;
 
 import Dao.VendaDAO;
+<<<<<<< HEAD
 import Dao.ProdutoDAO;
 import Model.Venda;
 import Model.CartItem;
@@ -22,10 +23,23 @@ public class VendaController { // <-- Abertura da Classe
     private final ProdutoDAO produtoDAO;
     private List<CartItem> carrinho;
     private double totalVenda;
+=======
+import java.util.List;
+import Model.CartItem; // Importação assumida
+
+/**
+ * Controlador responsável por mediar as operações de venda entre a View e o VendaDAO.
+ * A implementação aqui é simplificada para apenas demonstrar a correção do erro.
+ */
+public class VendaController {
+
+    private final VendaDAO vendaDAO;
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
 
     // Tipo de View alterado para Object
     public VendaController(Object view) {
         this.vendaDAO = new VendaDAO();
+<<<<<<< HEAD
         this.produtoDAO = new ProdutoDAO();
         this.carrinho = new ArrayList<>();
         this.totalVenda = 0.0;
@@ -158,3 +172,30 @@ public class VendaController { // <-- Abertura da Classe
         }
     } // <-- Fechamento do Método
 } // <-- Fechamento da Classe
+=======
+    }
+
+    // Método que estava causando o erro de construtor (agora resolvido pela Model.Venda)
+    public boolean criarVenda(String cliente, int id, double totalProduto, double desconto, String formaPagamento, double acrescimo) {
+
+        // 1. Resolve o erro de construtor (Venda agora tem 6 argumentos)
+        Venda novaVenda = new Venda(
+                cliente,
+                id,
+                totalProduto,
+                desconto,
+                formaPagamento,
+                acrescimo
+        );
+
+        // 2. Resolve o erro do método: registrarVenda -> salvarVenda
+        return vendaDAO.salvarVenda(novaVenda);
+    }
+
+    // Exemplo de outro método que poderia ser chamado pela tela de PDV
+    public boolean criarVendaPDV(double totalVenda, String formaPagamento, List<CartItem> itens) {
+        Venda novaVenda = new Venda(totalVenda, formaPagamento, itens);
+        return vendaDAO.salvarVenda(novaVenda);
+    }
+}
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)

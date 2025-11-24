@@ -24,12 +24,26 @@ public class Conexao {
                 Class.forName(DRIVER_CLASS);
                 System.out.println("✅ Driver JDBC carregado com sucesso: " + DRIVER_CLASS);
             } else {
+<<<<<<< HEAD
                 System.err.println("❌ Variável DB_DRIVER está ausente ou vazia no .env.");
+=======
+
+                System.err.println("❌ Variável DB_DRIVER está ausente ou vazia no .env.");
+
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
             }
         } catch (ClassNotFoundException e) {
+<<<<<<< HEAD
             // Se o driver não for encontrado (ex: falta o JAR do MySQL Connector)
             System.err.println("❌ Erro fatal: O Driver JDBC (" + DRIVER_CLASS + ") não foi encontrado.");
             throw new RuntimeException("Verifique o JAR do driver no seu classpath.", e);
+=======
+
+            System.err.println("❌ Erro fatal: O Driver JDBC (" + DRIVER_CLASS + ") não foi encontrado.");
+
+            throw new RuntimeException("Verifique o JAR do driver MySQL no seu classpath.", e);
+
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
         }
     }
 
@@ -40,16 +54,34 @@ public class Conexao {
      */
     public static Connection getConnection() {
         if (url == null || user == null || pass == null) {
+<<<<<<< HEAD
             System.err.println("❌ Variáveis de ambiente incompletas (URL, USER, ou PASS). Verifique o arquivo .env.");
+=======
+
+            System.err.println("❌ Variáveis de ambiente incompletas (URL, USER, ou PASS). Verifique o arquivo .env.");
+
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
             return null;
         }
         try {
             // Tenta estabelecer a conexão usando as credenciais do .env
             return DriverManager.getConnection(url, user, pass);
         } catch (SQLException e) {
+<<<<<<< HEAD
             System.err.println("❌ Erro ao conectar ao banco de dados. Verifique as credenciais e a URL.");
             System.err.println("Detalhe: " + e.getMessage());
             e.printStackTrace(); // Mantenha o stack trace para diagnóstico
+=======
+
+            System.err.println("❌ Erro ao conectar ao banco de dados Railway. Verifique as credenciais e a URL.");
+
+            System.err.println(" Detalhe: " + e.getMessage());
+
+// Imprime o stack trace completo para diagnóstico no console
+
+// e.printStackTrace();
+
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
             return null;
         }
     }

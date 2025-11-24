@@ -152,6 +152,10 @@ public class NotificationCell extends ListCell<Notification> {
             lblMessage.setTextFill(Color.web(messageColor));
             lblType.setTextFill(Color.web(borderColor).darker());
 
+<<<<<<< HEAD
+=======
+            // --- INÍCIO DA CORREÇÃO ---
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
             // 5. Define a Opacidade (baseado no status 'lida')
             // Binda a opacidade à propriedade 'lida'
             layout.opacityProperty().bind(

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #F7F7F7;"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.RelatoriosController">
+
+    <top>
+        <AnchorPane prefHeight="70" prefWidth="1280" style="-fx-background-color: #0F172A;">
+            <children>
+                <JFXHamburger fx:id="h1" layoutX="20" layoutY="15" prefHeight="40" prefWidth="40" />
+                <Label layoutX="570.0" layoutY="20.0" text="Relatórios" textFill="white">
+                    <font><Font name="Georgia Bold" size="26"/></font>
+                </Label>
+            </children>
+        </AnchorPane>
+    </top>
+
+    <center>
+        <StackPane>
+
+            <JFXDrawer fx:id="drawer"
+                       defaultDrawerSize="240"
+                       overLayVisible="true"
+                       prefHeight="1080"
+                       prefWidth="240"
+                       resizableOnDrag="false"/>
+
+            <AnchorPane fx:id="mainContent" style="-fx-background-color: #F7F7F7;">
+                <children>
+
+                    <!-- FILTROS -->
+                    <Label layoutX="30.0" layoutY="21.0" text="Tipo de relatório">
+                        <font><Font name="System Bold" size="12.0"/></font>
+                    </Label>
+
+                    <ComboBox fx:id="comboOpcoes" layoutX="20.0" layoutY="40.0" prefWidth="160"
+                              promptText="Vendas"
+                              style="-fx-background-radius: 8; -fx-background-color: #E0E0E0;">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="Vendas"/>
+                                <String fx:value="Produtos"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+
+                    <Label layoutX="231.0" layoutY="21.0" text="Período">
+                        <font><Font name="System Bold" size="12.0"/></font>
+                    </Label>
+
+                    <ComboBox fx:id="comboPeriodo" layoutX="224.0" layoutY="40.0" prefWidth="160"
+                              promptText="Semanal"
+                              style="-fx-background-radius: 8; -fx-background-color: #E0E0E0;">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Diário"/>
+                                <String fx:value="Semanal"/>
+                                <String fx:value="Mensal"/>
+                                <String fx:value="Anual"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+
+                    <!--<Button layoutX="428.0" layoutY="40.0" prefWidth="140"
+                            style="-fx-background-color: #E0E0E0; -fx-background-radius: 8;"
+                            text="Exportar PDF"/>-->
+
+                    <!--<Button layoutX="608.0" layoutY="40.0" prefWidth="140"
+                            style="-fx-background-color: #E0E0E0; -fx-background-radius: 8;"
+                            text="Exportar Excel"/>-->
+
+                    <!-- CARD TOTAL VENDAS -->
+                    <VBox alignment="CENTER" layoutX="608.0" layoutY="92.0"
+                          prefHeight="100" prefWidth="200" spacing="5"
+                          style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
+                                 -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
+                        <Label text="Total de Vendas por Periodo"><font><Font name="System Bold" size="14"/></font></Label>
+                        <Label fx:id="lblTotalVendas" text="R$ 0,00"><font><Font name="System" size="18"/></font></Label>
+                    </VBox>
+
+                    <!-- CARD LUCRO BRUTO -->
+                    <VBox alignment="CENTER" layoutX="837.0" layoutY="92.0"
+                          prefHeight="100" prefWidth="200" spacing="5"
+                          style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
+                                 -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
+                        <Label text="Lucro Bruto por Periodo"><font><Font name="System Bold" size="14"/></font></Label>
+                        <Label fx:id="lblLucroBruto" text="R$ 0,00"><font><Font name="System" size="18"/></font></Label>
+                    </VBox>
+
+                    <!-- CARD MARGEM -->
+                    <VBox alignment="CENTER" layoutX="1066.0" layoutY="92.0"
+                          prefHeight="100" prefWidth="200" spacing="5"
+                          style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
+                                 -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
+                        <Label text="Margem de Lucro % por Periodo"><font><Font name="System Bold" size="14"/></font></Label>
+                        <Label fx:id="lblMargemLucro" text="0.00%"><font><Font name="System" size="18"/></font></Label>
+                    </VBox>
+
+                    <!-- LISTA AGRUPADA POR SEMANA -->
+                    <VBox layoutX="18.0" layoutY="92.0" prefHeight="524.0" prefWidth="576.0"
+                          style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
+                                 -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-padding: 10;" text="Vendas por Semana no Ano Atual"/>
+                            <Accordion fx:id="accordionSemanas" prefHeight="480.0" prefWidth="540.0"/>
+                        </children>
+                    </VBox>
+
+                    <!-- GRÁFICO MENSAL (SUBSTITUÍ O DE SEMANA) -->
+                    <VBox layoutX="608.0" layoutY="216.0"
+                          prefHeight="402.0" prefWidth="658.0"
+                          style="-fx-background-color: white; -fx-border-color: #CFCFCF; -fx-border-radius: 8;
+                                 -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,4);">
+                        <children>
+                            <Label style="-fx-font-weight: bold; -fx-padding: 10;"
+                                   text="Faturamento por Mês no Ano Atual"/>
+
+                            <BarChart fx:id="graficoMensal" prefHeight="367.0" prefWidth="640.0">
+                                <xAxis><CategoryAxis fx:id="eixoMes" label="Mês"/></xAxis>
+                                <yAxis><NumberAxis fx:id="eixoValorMensal" label="Valor (R$)"/></yAxis>
+                            </BarChart>
+                        </children>
+                    </VBox>
+
+                </children>
+            </AnchorPane>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

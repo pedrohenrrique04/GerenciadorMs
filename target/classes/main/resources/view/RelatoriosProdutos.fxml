@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="720" prefWidth="1280" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RelatoriosProdutosController">
+    <top>
+        <AnchorPane prefHeight="70" prefWidth="1280" style="-fx-background-color: #0F172A;">
+            <children>
+                <JFXHamburger fx:id="h2" layoutX="20" layoutY="15" prefHeight="40" prefWidth="40" />
+                <Label layoutX="570.0" layoutY="20.0" text="Relatórios" textFill="white">
+                    <font><Font name="Georgia Bold" size="26" /></font>
+                </Label>
+            </children>
+        </AnchorPane>
+    </top>
+
+    <center>
+        <StackPane>
+            <JFXDrawer fx:id="drawer02" defaultDrawerSize="240" overLayVisible="true" prefHeight="1080" prefWidth="240" resizableOnDrag="false">
+                <children>
+                    <AnchorPane fx:id="mainContent02" style="-fx-background-color: #F7F7F7;">
+                        <children>
+
+                            <!-- ======================== FILTROS ======================== -->
+                            <Label layoutX="30" layoutY="21" text="Tipo de relatório">
+                                <font>
+                                    <Font name="System Bold" size="12" />
+                                </font>
+                            </Label>
+
+                            <ComboBox fx:id="comboOpcoes02" layoutX="20" layoutY="40" prefWidth="160" promptText="Produtos" style="-fx-background-radius: 8; -fx-background-color: #E0E0E0;">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Vendas" />
+                                        <String fx:value="Produtos" />
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+
+                            <Label layoutX="260" layoutY="21" text="Categoria">
+                                <font>
+                                    <Font name="System Bold" size="12" />
+                                </font>
+                            </Label>
+
+                            <ComboBox fx:id="comboCategoria" layoutX="250" layoutY="40" prefWidth="160" promptText="Categoria" style="-fx-background-radius: 8; -fx-background-color: #E0E0E0;">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="roupas" />
+                                        <String fx:value="calçados" />
+                                        <String fx:value="acessorios" />
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+
+                            <!-- Botões Exportar -->
+                            <!--<Button fx:id="btnExportarPDF" text="Exportar PDF"
+                                    layoutX="600" layoutY="40" prefWidth="160"
+                                    style="-fx-background-color: #D0D0D0; -fx-background-radius: 8;" />
+
+                            <Button fx:id="btnExportarExcel" text="Exportar Excel"
+                                    layoutX="770" layoutY="40" prefWidth="160"
+                                    style="-fx-background-color: #D0D0D0; -fx-background-radius: 8;" />-->
+
+                            <!-- ======================== CARDS ======================== -->
+                            <!-- ESTOQUE ATUAL -->
+                            <AnchorPane layoutX="549.0" layoutY="18.0" prefHeight="96.0" prefWidth="162.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #D3D3D3;">
+                                <children>
+
+                                    <!-- Título -->
+                                    <Label fx:id="labelEstoqueTotal" layoutX="35.0" layoutY="38.0" text="Estoque Atual" textAlignment="CENTER">
+                                        <font><Font name="System Bold" size="14" /></font>
+                                    </Label>
+
+                                    <!-- Total de itens
+                                    <Label fx:id="labelTotalItens" layoutX="20" layoutY="40"
+                                           style="-fx-font-size: 24; -fx-font-weight: bold;"
+                                           text="0 itens" />-->
+
+                                    <!-- Status
+                                    <Label fx:id="labelStatusEstoque" layoutX="20" layoutY="70"
+                                           style="-fx-text-fill: #2E8B57; -fx-font-size: 12;"
+                                           text="Carregando..." />-->
+
+                                </children>
+                            </AnchorPane>
+
+
+
+                            <!-- PRODUTOS PARADOS
+                            <AnchorPane layoutX="18.0" layoutY="220.0" prefHeight="100" prefWidth="466.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #D3D3D3;">
+                                <children>
+                                    <Label layoutX="155.0" layoutY="41.0" text="Produtos Parados (sem saída)" />
+                                </children>
+                            </AnchorPane>-->
+
+                            <!-- ======================== GRÁFICO ======================== -->
+                            <!--<BarChart fx:id="graficoMovimentacao" layoutX="500" layoutY="100" prefHeight="260" prefWidth="740">
+                                <xAxis>
+                                    <CategoryAxis label="Movimentação" />
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Quantidade" />
+                                </yAxis>
+                            </BarChart>-->
+
+                            <!-- ======================== TABELA ======================== -->
+                            <TableView fx:id="tableRelatorios" layoutX="20" layoutY="380" prefHeight="300" prefWidth="1220">
+                                <columns>
+                                    <TableColumn fx:id="colProduto" prefWidth="150" text="Produto" />
+                                    <TableColumn fx:id="colCategoria" prefWidth="100" text="Categoria" />
+                                    <TableColumn fx:id="colQnt" prefWidth="120" text="Qnt. Disponível" />
+                                    <TableColumn fx:id="colUltimaVenda" prefWidth="120" text="Última Venda" />
+                                    <TableColumn fx:id="colPrecoUnit" prefWidth="100" text="Preço Unit" />
+                                    <TableColumn fx:id="colPrecoVend" prefWidth="100" text="Preço Vend" />
+                                    <TableColumn fx:id="colLucro" prefWidth="90" text="Lucro Unit" />
+                                </columns>
+                            </TableView>
+
+      
+                                  <!-- PRODUTOS EM ESTOQUE MÍNIMO -->
+                            <AnchorPane layoutX="20.0" layoutY="142.0" prefHeight="220.0" prefWidth="1147.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #D3D3D3;">
+                                <children>
+
+                                          <Label layoutX="20" layoutY="20" text="Produtos em Estoque Mínimo" />
+                                    <Label layoutX="192.0" layoutY="9.0" style="-fx-font-size: 28; -fx-text-fill: #FF4A4A;" text="⚠" />
+      
+                                    <!-- TABELA DOS PRODUTOS COM ESTOQUE MÍNIMO -->
+                                    <TableView fx:id="tableEstoqueMinimo" layoutX="78.0" layoutY="80.0" prefHeight="130" prefWidth="990">
+      
+                                        <columns>
+      
+                                            <TableColumn fx:id="colNomeMin" prefWidth="180" text="Produto" />
+                                            <TableColumn fx:id="colCategoriaMin" prefWidth="120" text="Categoria" />
+                                            <TableColumn fx:id="colEstoqueMin" prefWidth="100" text="Estoque" />
+      
+                                            <TableColumn fx:id="colPrecoMin" prefWidth="110" text="Preço" />
+                                            <TableColumn fx:id="colPrecoCustoMin" prefWidth="110" text="Preço Custo" />
+                                            <TableColumn fx:id="colLucroMin" prefWidth="120" text="Lucro Unitário" />
+      
+                                        </columns>
+                                    </TableView>
+                                </children>
+                            </AnchorPane>
+
+                        </children>
+
+                    </AnchorPane>
+                </children></JFXDrawer>
+        </StackPane>
+
+    </center>
+
+</BorderPane>
