@@ -1,4 +1,4 @@
-package model; // Pacote: model
+package Model; // Pacote: model
 
 import java.io.Serializable;
 import java.time.LocalDate;

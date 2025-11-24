@@ -1,6 +1,6 @@
 package controller;
 
-import model.ProdutoModel; // <-- IMPORT CORRIGIDO!
+import Model.ProdutoModel; // <-- IMPORT CORRIGIDO!
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
