@@ -11,6 +11,7 @@ import java.net.URL;
 // IMPORTAÇÕES NECESSÁRIAS PARA ACESSAR AS VIEWS EM JAVA PURO
 import view.TelaRealizarVenda;
 import view.TelaNotificacoes;
+import view.TelaProdutos; // <--- NOVO IMPORT ADICIONADO
 
 public class DashboardController {
 
@@ -23,12 +24,21 @@ public class DashboardController {
     @FXML
     private VBox sideMenu;
 
+    // --- INSTÂNCIAS DE TELAS EM JAVA PURO ---
+    // Variáveis para manter as instâncias das telas (melhora a performance)
+    private final TelaProdutos telaProdutosInstance = new TelaProdutos(); // <--- INSTÂNCIA DA TELA DE PRODUTOS
+
+    // ... (Instâncias das outras telas, se necessário, como telaVendas, etc.)
+    // private final TelaRealizarVenda telaVendasInstance = new TelaRealizarVenda();
+
     @FXML
     public void initialize() {
         if (contentArea == null) {
             System.out.println("⚠ ERRO: contentArea NÃO foi injetado. Verifique o fx:id no FXML!");
         } else {
             System.out.println("OK: contentArea foi injetado!");
+            // Carrega uma tela padrão (opcional)
+            // loadDashboard();
         }
     }
 
@@ -55,12 +65,33 @@ public class DashboardController {
     }
 
     // ====================================================================
+    // CARREGAR A TELA DE PRODUTOS (JAVA PURO) <--- NOVO MÉTODO
+    // ====================================================================
+    @FXML
+    private void loadProdutosView() {
+        System.out.println("🔄 Abrindo tela de Produtos (TelaProdutos.java)...");
+        try {
+            // Usa a instância criada acima
+            BorderPane conteudoProdutos = telaProdutosInstance.getTela();
+            contentArea.setCenter(conteudoProdutos);
+            System.out.println("✅ Sucesso ao carregar TelaProdutos.");
+
+        } catch (Exception e) {
+            System.err.println("❌ Erro ao carregar a tela de produtos construída em Java.");
+            e.printStackTrace();
+        }
+    }
+    // ====================================================================
+
+
+    // ====================================================================
     // CARREGAR A TELA DE VENDAS (JAVA PURO)
     // ====================================================================
     @FXML
     private void loadRealizarVendas() {
         System.out.println("🔄 Abrindo tela de Vendas (TelaRealizarVenda.java)...");
         try {
+            // Recomendo usar uma instância de classe para evitar recriação constante:
             TelaRealizarVenda telaVendas = new TelaRealizarVenda();
             BorderPane conteudoVendas = telaVendas.getTela(); // Chama getTela()
             contentArea.setCenter(conteudoVendas);
@@ -108,9 +139,11 @@ public class DashboardController {
         loadView("Relatorios.fxml");
     }
 
-    @FXML
+    @FXML // <--- MÉTODO ORIGINALMENTE LIGADO A UM FXML AGORA DESLIGADO/REMOVIDO
     private void loadProdutos() {
-        loadView("RelatoriosProdutos.fxml");
+        // loadView("RelatoriosProdutos.fxml"); // Foi substituído por loadProdutosView()
+        // Se você quer carregar o catálogo de produtos, chame o novo método:
+        loadProdutosView();
     }
 
     @FXML
@@ -136,5 +169,11 @@ public class DashboardController {
             sideMenu.setVisible(true);
             sideMenu.setManaged(true);
         }
+    }
+
+    // Inclua este método no seu DashboardController e ligue-o ao evento de fechamento
+    // da janela principal (Stage) para salvar os dados de produtos.
+    public void salvarDadosAoEncerrar() {
+        telaProdutosInstance.salvarProdutos();
     }
 }
