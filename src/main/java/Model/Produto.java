@@ -1,35 +1,70 @@
 package Model;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import java.math.BigDecimal;
 
-/**
- * Representa um produto "do banco de dados".
- * Usa JavaFX Properties para a tabela de seleção.
- */
 public class Produto {
 
-    private final IntegerProperty id;
-    private final StringProperty nome;
-    private final DoubleProperty preco;
+    private int id;
+    private String nome;
+    private BigDecimal preco;        // decimal(10,2)
+    private BigDecimal precoCusto;   // decimal(10,2)
+    private int estoque;
+    private BigDecimal custo;        // decimal(10,2)
+    private String categoria;
 
-    public Produto(int id, String nome, double preco) {
-        this.id = new SimpleIntegerProperty(id);
-        this.nome = new SimpleStringProperty(nome);
-        this.preco = new SimpleDoubleProperty(preco);
+    public int getId() {
+        return id;
     }
 
-    // --- Getters (padrão) ---
-    public int getId() { return id.get(); }
-    public String getNome() { return nome.get(); }
-    public double getPreco() { return preco.get(); }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    // --- Property Getters (para o JavaFX) ---
-    public IntegerProperty idProperty() { return id; }
-    public StringProperty nomeProperty() { return nome; }
-    public DoubleProperty precoProperty() { return preco; }
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public BigDecimal getPreco() {
+        return preco;
+    }
+
+    public void setPreco(BigDecimal preco) {
+        this.preco = preco;
+    }
+
+    public BigDecimal getPrecoCusto() {
+        return precoCusto;
+    }
+
+    public void setPrecoCusto(BigDecimal precoCusto) {
+        this.precoCusto = precoCusto;
+    }
+
+    public int getEstoque() {
+        return estoque;
+    }
+
+    public void setEstoque(int estoque) {
+        this.estoque = estoque;
+    }
+
+    public BigDecimal getCusto() {
+        return custo;
+    }
+
+    public void setCusto(BigDecimal custo) {
+        this.custo = custo;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
 }

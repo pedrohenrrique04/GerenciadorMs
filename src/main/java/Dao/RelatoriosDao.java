@@ -50,10 +50,11 @@ public class RelatoriosDao {
             return 0.0;
         }
 
-        String sql = "SELECT COALESCE(SUM((v.preco - p.custo) * v.quantidade), 0) AS lucro_bruto " +
+        String sql = "SELECT COALESCE(SUM((v.preco_unitario - p.custo) * v.quantidade), 0) AS lucro_bruto " +
                 "FROM vendas v " +
-                "JOIN produtos p ON p.nome = v.produto " +
+                "JOIN produtos p ON v.produto_id = p.id " +
                 "WHERE v.data_venda BETWEEN ? AND ?";
+
 
         try (Connection conn = Conexao.getConn();
              PreparedStatement ps = conn.prepareStatement(sql)) {
