@@ -91,7 +91,7 @@ public class RelatoriosController implements Initializable {
 
             case "Diário":
                 dataInicial = hoje.atStartOfDay();
-                dataFinal = LocalDateTime.now();
+                dataFinal = hoje.atTime(23, 59, 59, 999_999_999); // fim do dia
                 break;
 
             case "Semanal":
