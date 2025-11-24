@@ -8,10 +8,10 @@ import javafx.scene.Node;
 import java.io.IOException;
 import java.net.URL;
 
-// IMPORTA&Ccedil;&Otilde;ES NECESS&Aacute;RIAS PARA ACESSAR AS VIEWS EM JAVA PURO
+// IMPORTAÇÕES NECESSÁRIAS PARA ACESSAR AS VIEWS EM JAVA PURO
 import view.TelaRealizarVenda;
 import view.TelaNotificacoes;
-import view.TelaProdutos; // <--- NOVO IMPORT ADICIONADO
+import view.TelaProdutos;
 
 public class DashboardController {
 
@@ -25,12 +25,7 @@ public class DashboardController {
     private VBox sideMenu;
 
     // --- INSTÂNCIAS DE TELAS EM JAVA PURO ---
-    // Variáveis para manter as instâncias das telas (melhora a performance)
-    // A instância é criada uma única vez, garantindo acesso em toda a classe (Opção 1)
     private final TelaProdutos telaProdutosInstance = new TelaProdutos();
-
-    // ... (Instâncias das outras telas, se necessário, como telaVendas, etc.)
-    // private final TelaRealizarVenda telaVendasInstance = new TelaRealizarVenda();
 
     @FXML
     public void initialize() {
@@ -46,7 +41,7 @@ public class DashboardController {
     // ▶ LÓGICA DE CARREGAMENTO PADRÃO PARA ARQUIVOS FXML
     private void loadView(String fxmlName) {
         try {
-            // Verifica se o arquivo existe ANTES de tentar carregar
+            // A busca de recursos usa o caminho relativo ao ClassLoader.
             URL resource = getClass().getResource("/view/" + fxmlName);
 
             if (resource == null) {
@@ -92,9 +87,8 @@ public class DashboardController {
     private void loadRealizarVendas() {
         System.out.println("🔄 Abrindo tela de Vendas (TelaRealizarVenda.java)...");
         try {
-            // Recomendo usar uma instância de classe para evitar recriação constante:
             TelaRealizarVenda telaVendas = new TelaRealizarVenda();
-            BorderPane conteudoVendas = telaVendas.getTela(); // Chama getTela()
+            BorderPane conteudoVendas = telaVendas.getTela();
             contentArea.setCenter(conteudoVendas);
             System.out.println(" Sucesso ao carregar TelaRealizarVenda.");
 
@@ -113,10 +107,7 @@ public class DashboardController {
         System.out.println("🔄 Abrindo tela de Notificações (TelaNotificacoes.java)...");
         try {
             TelaNotificacoes telaNotificacoes = new TelaNotificacoes();
-
-            // CHAMA O MÉTODO getTela() QUE DEVE ESTAR NA CLASSE TelaNotificacoes
             BorderPane conteudoNotificacoes = telaNotificacoes.getTela();
-
             contentArea.setCenter(conteudoNotificacoes);
             System.out.println("✅ Sucesso ao carregar TelaNotificacoes.");
 
@@ -140,10 +131,8 @@ public class DashboardController {
         loadView("Relatorios.fxml");
     }
 
-    @FXML // <--- MÉTODO ORIGINALMENTE LIGADO A UM FXML AGORA DESLIGADO/REMOVIDO
+    @FXML
     private void loadProdutos() {
-        // loadView("RelatoriosProdutos.fxml"); // Foi substituído por loadProdutosView()
-        // Se você quer carregar o catálogo de produtos, chame o novo método:
         loadProdutosView();
     }
 
@@ -152,12 +141,16 @@ public class DashboardController {
         loadView("usuario-view.fxml");
     }
 
-    // 👇 TELAS QUE PROVAVELMENTE AINDA PRECISAM DE ARQUIVO FXML
-
+    // ====================================================================
+    // CARREGAR A TELA DE TROCA E DEVOLUÇÃO (FXML)
+    // CORRIGIDO: O nome do arquivo FXML agora é "trocadevolucaofxml.fxml"
+    // ====================================================================
     @FXML
     private void loadTrocaDevolucao() {
-        loadView("trocaDevolucao.fxml");
+        System.out.println("🔄 Abrindo tela de Troca/Devolução (trocadevolucaofxml.fxml)...");
+        loadView("trocadevolucaofxml.fxml");
     }
+    // ====================================================================
 
 
     // ▶ ABRIR/FECHAR MENU LATERAL
@@ -172,15 +165,7 @@ public class DashboardController {
         }
     }
 
-    // Inclua este método no seu DashboardController e ligue-o ao evento de fechamento
-    // da janela principal (Stage) para salvar os dados de produtos.
     public void salvarDadosAoEncerrar() {
-        //  CORREÇÃO CRITICA APLICADA:
-        // A chamada 'telaProdutosInstance.salvarProdutos();' FOI REMOVIDA.
-        // Motivo: A persistência de produtos agora é feita via ProdutoDAO (MySQL)
-        // e ocorre em tempo real (instantaneamente) na classe TelaProdutos,
-        // quando um novo produto é criado. O salvamento em arquivo (.dat) foi descontinuado.
-
         System.out.println("O Dashboard está sendo encerrado. A persistência de produtos está garantida pelo MySQL.");
     }
 }

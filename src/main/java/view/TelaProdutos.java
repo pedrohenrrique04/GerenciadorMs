@@ -1,7 +1,7 @@
 package view;
 
+import Dao.ProdutoDAO;
 import Model.ProdutoModel;
-import Dao.ProdutoDAO; // 🚨 IMPORTANTE: Adiciona a dependência com o MySQL
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;

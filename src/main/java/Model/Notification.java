@@ -3,64 +3,77 @@ package Model;
 import javafx.beans.property.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Representa uma notificação no sistema, usando JavaFX Properties
- * para permitir o binding reativo (opacidade e checkbox).
+ * Modelo de dados para uma notificação.
+ * Utiliza JavaFX Properties para permitir observação na interface.
  */
 public class Notification {
 
-    // Propriedades do JavaFX para permitir o binding
+    // Contador estático para simular IDs no lado do cliente
+    // Inicializado em 0 ou 1, dependendo da sua preferência de ID.
+    // Garante que o ID atribuído manualmente no DAO seja maior que o ID_COUNTER.
+    private static final AtomicInteger ID_COUNTER = new AtomicInteger(100); // Começa um pouco mais alto para diferenciar mock
+
+    // Formatador para exibição da data/hora
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+    // Propriedades observáveis
     private final IntegerProperty id = new SimpleIntegerProperty();
-    private final StringProperty title = new SimpleStringProperty();
-    private final StringProperty message = new SimpleStringProperty();
-    private final ObjectProperty<NotificationType> type = new SimpleObjectProperty<>();
+    private final StringProperty titulo = new SimpleStringProperty();
+    private final StringProperty mensagem = new SimpleStringProperty();
+    private final ObjectProperty<NotificationType> tipo = new SimpleObjectProperty<>();
+    private final BooleanProperty lida = new SimpleBooleanProperty(false);
     private final ObjectProperty<LocalDateTime> timestamp = new SimpleObjectProperty<>();
-    private final BooleanProperty isRead = new SimpleBooleanProperty();
 
-    // Formato de data usado para exibição
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
-    // Construtor
-    public Notification(int id, String title, String message, NotificationType type, LocalDateTime timestamp, boolean isRead) {
+    // Construtor completo
+    public Notification(int id, String titulo, String mensagem, NotificationType tipo, boolean lida, LocalDateTime timestamp) {
         this.id.set(id);
-        this.title.set(title);
-        this.message.set(message);
-        this.type.set(type);
+        this.titulo.set(titulo);
+        this.mensagem.set(mensagem);
+        this.tipo.set(tipo);
+        this.lida.set(lida);
         this.timestamp.set(timestamp);
-        this.isRead.set(isRead);
+        // Garante que o contador estático não volte
+        if (id >= ID_COUNTER.get()) {
+            ID_COUNTER.set(id + 1);
+        }
     }
 
-    // --- Métodos de Propriedade (Obrigatórios para o binding) ---
-
-    // Método que a NotificationCell está usando: checkBox.selectedProperty().bindBidirectional(notification.readProperty());
-    public BooleanProperty readProperty() {
-        return isRead;
+    // Construtor simplificado para novas notificações (gera ID e timestamp)
+    public Notification(String titulo, String mensagem, NotificationType tipo) {
+        // ID temporário 0, será ajustado no DAO se necessário
+        this(0, titulo, mensagem, tipo, false, LocalDateTime.now());
     }
 
-    // --- Getters e Setters (Padrão) ---
-
-    public boolean isRead() {
-        return isRead.get();
-    }
-
-    public void setRead(boolean read) {
-        this.isRead.set(read);
-    }
-
-    // Método que gera a String formatada, usada na NotificationCell
+    /**
+     * @return O timestamp formatado para exibição na UI.
+     */
     public String getFormattedTimestamp() {
-        LocalDateTime time = timestamp.get();
-        return time != null ? time.format(FORMATTER) : "N/A";
+        if (getTimestamp() == null) {
+            return "Data Indisponível";
+        }
+        return getTimestamp().format(FORMATTER);
     }
 
-    public NotificationType getType() {
-        return type.get();
-    }
-
-    // Outros Getters (mantidos para completude)
+    // --- Getters Simples ---
     public int getId() { return id.get(); }
-    public String getTitle() { return title.get(); }
-    public String getMessage() { return message.get(); }
+    public String getTitulo() { return titulo.get(); }
+    public String getMensagem() { return mensagem.get(); }
+    public NotificationType getTipo() { return tipo.get(); }
+    public boolean isLida() { return lida.get(); }
     public LocalDateTime getTimestamp() { return timestamp.get(); }
+
+    // --- Setters Simples (Correção: Adicionado setId) ---
+    public void setId(int id) { this.id.set(id); }
+    public void setLida(boolean lida) { this.lida.set(lida); }
+
+    // --- Propriedades JavaFX ---
+    public IntegerProperty idProperty() { return id; }
+    public StringProperty tituloProperty() { return titulo; }
+    public StringProperty mensagemProperty() { return mensagem; }
+    public ObjectProperty<NotificationType> tipoProperty() { return tipo; }
+    public BooleanProperty lidaProperty() { return lida; }
+    public ObjectProperty<LocalDateTime> timestampProperty() { return timestamp; }
 }

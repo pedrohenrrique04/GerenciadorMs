@@ -1,119 +1,73 @@
 package controller;
 
-import Dao.ProdutoDAO;
+import Dao.ProdutoDAO; // CORREÇÃO: Importação da classe ProdutoDAO
 import Model.ProdutoModel;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import javax.swing.JOptionPane;
+// Assumindo que há uma interface ou view que este controlador gerencia
 
-public class SelecionarProdutoController implements Initializable {
+/**
+ * Controlador responsável por gerenciar a seleção de produtos,
+ * geralmente usado em contextos como adicionar itens a uma venda.
+ */
+public class SelecionarProdutoController {
 
-    // --- Componentes FXML ---
-    @FXML
-    private ListView<ProdutoModel> listaProdutos;
-    @FXML
-    private TextField campoPesquisa;
-    @FXML
-    private Button adicionarAoCarrinhoBtn;
+    private final ProdutoDAO produtoDAO;
+    // Tipicamente, este controlador teria uma referência para a View ou outro Controller (e.g., VendaController)
+    // private final VendaController vendaController;
 
-    // --- Variáveis de Dados ---
-    private final ProdutoDAO produtoDAO = new ProdutoDAO();
-    private ObservableList<ProdutoModel> produtosObservableList;
-    private ProdutoModel produtoSelecionado;
-
-    // --- MÉTODOS DE INICIALIZAÇÃO ---
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Inicializa a lista observável
-        produtosObservableList = FXCollections.observableArrayList();
-
-        // Associa a lista à sua ListView
-        listaProdutos.setItems(produtosObservableList);
-
-        // 🚨 Configura o listener para a pesquisa (filtro)
-        campoPesquisa.textProperty().addListener((obs, oldValue, newValue) -> filtrarProdutos(newValue));
-
-        // 🚨 Configura a ação de seleção
-        listaProdutos.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            produtoSelecionado = newVal;
-            adicionarAoCarrinhoBtn.setDisable(newVal == null);
-        });
-
-        // O Initialize agora apenas prepara a lista. O recarregamento será forçado.
+    // Constructor que inicializa a DAO
+    public SelecionarProdutoController() {
+        // Linha 29:19 e 29:47 (onde o erro foi reportado) agora devem ser resolvidas
+        this.produtoDAO = new ProdutoDAO();
+        // this.vendaController = vendaController; // Se aplicável
     }
 
-    // --- MÉTODO CHAVE DA CORREÇÃO ---
-
     /**
-     * 🚨 Recarrega a lista de produtos do banco de dados, corrigindo o problema de cache.
-     * Deve ser chamado pelo VendaController ANTES de a janela ser exibida.
+     * Lista todos os produtos disponíveis no banco de dados.
+     * @return Lista de ProdutoModel.
      */
-    public void recarregarProdutosDoBanco() {
-        if (listaProdutos == null) return; // Garante que os componentes FXML foram carregados
-
-        // 1. Limpa a lista atual (libera o cache)
-        produtosObservableList.clear();
-
-        // 2. Busca dados frescos do banco (chama o listarTodos() que está OK)
-        List<ProdutoModel> produtosDoBanco = produtoDAO.listarTodos();
-
-        // 3. Adiciona os novos dados à lista da UI
-        produtosObservableList.addAll(produtosDoBanco);
+    public List<ProdutoModel> listarProdutos() {
+        return produtoDAO.listarTodos();
     }
 
-    // --- MÉTODOS DE AÇÃO ---
+    /**
+     * Busca um produto por ID.
+     * @param id O ID do produto.
+     * @return Um Optional contendo o ProdutoModel, se encontrado.
+     */
+    public Optional<ProdutoModel> buscarProdutoPorId(int id) {
+        return produtoDAO.buscarPorId(id);
+    }
 
     /**
-     * Lógica para filtrar a lista de produtos baseada no texto digitado.
+     * Lógica para adicionar o produto selecionado a um carrinho de compras.
+     * Este é um esqueleto e deve ser implementado de acordo com a regra de negócio.
+     * * @param idProduto ID do produto a ser adicionado.
+     * @param quantidade Quantidade a ser adicionada.
      */
-    private void filtrarProdutos(String filtro) {
-        if (filtro == null || filtro.isEmpty()) {
-            listaProdutos.setItems(produtosObservableList);
-            return;
+    public void adicionarProdutoSelecionado(int idProduto, int quantidade) {
+        Optional<ProdutoModel> produtoOpt = buscarProdutoPorId(idProduto);
+
+        if (produtoOpt.isPresent()) {
+            ProdutoModel produto = produtoOpt.get();
+
+            if (produto.getQuantidade() >= quantidade) {
+                // Aqui você chamaria o método no VendaController ou em outra classe
+                // responsável por gerenciar o carrinho de vendas.
+                // Exemplo: vendaController.adicionarProdutoAoCarrinho(idProduto, quantidade);
+                JOptionPane.showMessageDialog(null,
+                        "Produto '" + produto.getNome() + "' adicionado ao carrinho (" + quantidade + " unidades).",
+                        "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null,
+                        "Estoque insuficiente para o produto: " + produto.getNome(),
+                        "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Produto não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
-
-        String filtroLowerCase = filtro.toLowerCase();
-
-        // Filtra a lista observável completa (para evitar buscar no banco a cada caractere)
-        List<ProdutoModel> listaFiltrada = produtosObservableList.stream()
-                .filter(produto -> produto.getNome().toLowerCase().contains(filtroLowerCase))
-                .collect(Collectors.toList());
-
-        listaProdutos.setItems(FXCollections.observableArrayList(listaFiltrada));
-    }
-
-    /**
-     * Ação ao clicar no botão 'Adicionar ao Carrinho'.
-     */
-    @FXML
-    private void adicionarAoCarrinho() {
-        if (produtoSelecionado != null) {
-            // 🚨 AQUI VOCÊ DEVE CHAMAR A LÓGICA DO SEU VENDACONTROLLER/PDV
-            // PARA ADICIONAR O 'produtoSelecionado' AO CARRINHO.
-
-            System.out.println("Adicionando ao carrinho: " + produtoSelecionado.getNome());
-
-            // Fecha a janela após a seleção
-            Stage stage = (Stage) adicionarAoCarrinhoBtn.getScene().getWindow();
-            stage.close();
-        }
-    }
-
-    /**
-     * Retorna o produto que foi selecionado (se precisar ser usado após o fechamento).
-     */
-    public ProdutoModel getProdutoSelecionado() {
-        return produtoSelecionado;
     }
 }

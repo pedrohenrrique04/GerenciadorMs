@@ -1,26 +1,28 @@
 package Model;
 
 /**
- * Enum para definir o tipo de notificação, influenciando a cor e a prioridade.
+ * Enum que define os possíveis tipos de notificação no sistema.
+ * Usado pelo NotificationService para categorizar e processar alertas.
  */
 public enum NotificationType {
-    INFO("Informação", "#3498db"), // Azul (e.g., Venda realizada)
-    ALERTA("Alerta", "#f39c12"),   // Laranja (e.g., Estoque baixo)
-    CRITICO("Crítico", "#e74c3c"); // <--- ESTA LINHA ESTAVA FALTANDO OU ERRADA. Vermelho (e.g., Produto fora de estoque)
+
+    CRITICO("CRÍTICO", "Alerta Imediato, requer atenção urgente."),
+    ALERTA("ALERTA", "Atenção Necessária, mas não bloqueia a operação."),
+    INFO("INFO", "Informação Geral, feedback de sucesso ou rotina.");
 
     private final String display;
-    private final String color;
+    private final String description;
 
-    NotificationType(String display, String color) {
+    NotificationType(String display, String description) {
         this.display = display;
-        this.color = color;
+        this.description = description;
     }
 
     public String getDisplay() {
         return display;
     }
 
-    public String getColor() {
-        return color;
+    public String getDescription() {
+        return description;
     }
 }
