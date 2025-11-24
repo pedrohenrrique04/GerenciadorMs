@@ -1,32 +1,42 @@
 package controller;
 
-import Dao.VendaDAO;
 import Model.Venda;
-import javax.swing.*;
+import Dao.VendaDAO;
+import java.util.List;
+import Model.CartItem; // Importação assumida
 
+/**
+ * Controlador responsável por mediar as operações de venda entre a View e o VendaDAO.
+ * A implementação aqui é simplificada para apenas demonstrar a correção do erro.
+ */
 public class VendaController {
 
-    private VendaDAO vendaDAO = new VendaDAO();
+    private final VendaDAO vendaDAO;
 
-    public void finalizarVenda(String produto, String qtd, String preco, String desconto, String pagamento) {
-        try {
-            int quantidade = Integer.parseInt(qtd);
-            double valor = Double.parseDouble(preco);
-            double desc = desconto.isEmpty() ? 0 : Double.parseDouble(desconto);
+    public VendaController() {
+        this.vendaDAO = new VendaDAO();
+    }
 
-            double total = valor * quantidade;
-            total -= total * (desc / 100);
+    // Método que estava causando o erro de construtor (agora resolvido pela Model.Venda)
+    public boolean criarVenda(String cliente, int id, double totalProduto, double desconto, String formaPagamento, double acrescimo) {
 
-            Venda v = new Venda(produto, quantidade, valor, desc, pagamento, total);
-            vendaDAO.registrarVenda(v);
+        // 1. Resolve o erro de construtor (Venda agora tem 6 argumentos)
+        Venda novaVenda = new Venda(
+                cliente,
+                id,
+                totalProduto,
+                desconto,
+                formaPagamento,
+                acrescimo
+        );
 
-            JOptionPane.showMessageDialog(null,
-                    "Venda registrada com sucesso!\nProduto: " + produto +
-                            "\nTotal: R$ " + String.format("%.2f", total)
-            );
+        // 2. Resolve o erro do método: registrarVenda -> salvarVenda
+        return vendaDAO.salvarVenda(novaVenda);
+    }
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Erro ao registrar venda: " + e.getMessage());
-        }
+    // Exemplo de outro método que poderia ser chamado pela tela de PDV
+    public boolean criarVendaPDV(double totalVenda, String formaPagamento, List<CartItem> itens) {
+        Venda novaVenda = new Venda(totalVenda, formaPagamento, itens);
+        return vendaDAO.salvarVenda(novaVenda);
     }
 }

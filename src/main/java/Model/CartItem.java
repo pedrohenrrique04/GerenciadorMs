@@ -1,49 +1,39 @@
 package Model;
 
-import javafx.beans.property.*;
-
 /**
- * Representa um item dentro do carrinho de compras.
- * Usa JavaFX Properties para funcionar corretamente com a TableView.
+ * Representa um item no carrinho de compras antes de ser salvo como ItemVenda no banco.
+ * Contém informações do produto (ID, nome, preço unitário) e a quantidade comprada.
  */
 public class CartItem {
-
-    private final IntegerProperty id;
-    private final StringProperty nome;
-    private final DoubleProperty preco;
-    private final IntegerProperty quantidade;
-    private final DoubleProperty total;
+    private int id; // ID do Produto (referência)
+    private String nome;
+    private double preco; // Preço unitário no momento da venda
+    private int quantidade;
 
     public CartItem(int id, String nome, double preco, int quantidade) {
-        this.id = new SimpleIntegerProperty(id);
-        this.nome = new SimpleStringProperty(nome);
-        this.preco = new SimpleDoubleProperty(preco);
-        this.quantidade = new SimpleIntegerProperty(quantidade);
-        this.total = new SimpleDoubleProperty(preco * quantidade);
-
-        // Listener para recalcular o total automaticamente
-        this.quantidade.addListener((obs, oldVal, newVal) ->
-                this.total.set(getPreco() * newVal.doubleValue())
-        );
-        this.preco.addListener((obs, oldVal, newVal) ->
-                this.total.set(newVal.doubleValue() * getQuantidade())
-        );
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+        this.quantidade = quantidade;
     }
 
-    // --- Getters (padrão) ---
-    public int getId() { return id.get(); }
-    public String getNome() { return nome.get(); }
-    public double getPreco() { return preco.get(); }
-    public int getQuantidade() { return quantidade.get(); }
-    public double getTotal() { return total.get(); }
+    // --- Getters ---
+
+    /**
+     * Retorna o ID do Produto (chave estrangeira para a tabela de Produtos).
+     * ESSENCIAL para o VendaDAO.
+     */
+    public int getId() { return id; }
+
+    public String getNome() { return nome; }
+    public double getPreco() { return preco; }
+    public int getQuantidade() { return quantidade; }
 
     // --- Setters ---
-    public void setQuantidade(int qtd) { this.quantidade.set(qtd); }
+    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
 
-    // --- Property Getters (para o JavaFX) ---
-    public IntegerProperty idProperty() { return id; }
-    public StringProperty nomeProperty() { return nome; }
-    public DoubleProperty precoProperty() { return preco; }
-    public IntegerProperty quantidadeProperty() { return quantidade; }
-    public DoubleProperty totalProperty() { return total; }
+    // --- Cálculo ---
+    public double getTotal() {
+        return preco * quantidade;
+    }
 }

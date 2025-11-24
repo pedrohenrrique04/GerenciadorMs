@@ -1,197 +1,132 @@
 package view;
 
+import Dao.NotificacaoDAO;
 import Model.Notification;
-import Model.NotificationType;
-import Dao.NotificacaoDAO; // --- 1. IMPORTAR O NOVO DAO ---
-import javafx.application.Application;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node; // Importar Node
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
+import javafx.beans.binding.Bindings; // Import necessário
 
-import java.time.LocalDateTime;
+/**
+ * Constrói a tela de Notificações, carregando dados do DAO e utilizando
+ * a NotificationCell customizada para renderização.
+ * Contém o método obrigatório getTela().
+ */
+public class TelaNotificacoes {
 
-public class TelaNotificacoes extends Application {
+    private final BorderPane tela;
+    private final ListView<Notification> listView;
 
-    // --- ESTILIZAÇÃO (Consistente com a Tela de Venda) ---
-    private static final String COR_FUNDO = "#f7f9fc";
-    private static final String COR_BORDA = "#e0e0e0";
-    private static final String COR_TEXTO_TITULO = "#333";
-    private static final String COR_TEXTO_NORMAL = "#555";
-    private static final String COR_TEXTO_SUBTILO = "#888";
+    public TelaNotificacoes() {
+        tela = new BorderPane();
+        tela.setStyle("-fx-background-color: #f4f7fa;"); // Fundo suave
 
-    // --- MUDANÇA AQUI ---
-    // A lista agora é lida do banco de dados
-    private final ObservableList<Notification> todasNotificacoes =
-            NotificacaoDAO.buscarTodasNotificacoes();
-    // --- FIM DA MUDANÇA ---
+        // 1. Componente ListView
+        listView = new ListView<>();
+        // Define a fábrica de células para usar a sua classe NotificationCell
+        listView.setCellFactory(lv -> new NotificationCell());
+        listView.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
 
-    // Lista filtrada que será exibida na tela
-    private FilteredList<Notification> notificacoesFiltradas;
-    private ToggleGroup filtroCategoria;
+        // 2. Carrega os dados Mock
+        ObservableList<Notification> notificacoes = NotificacaoDAO.buscarTodasNotificacoes();
+        listView.setItems(notificacoes);
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+        // 3. Área Principal (ListView dentro de um VBox para melhor padding)
+        VBox contentBox = new VBox(10, listView);
+        contentBox.setPadding(new Insets(20));
+        contentBox.setStyle("-fx-background-color: #f4f7fa;");
 
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Central de Notificações");
-
-        BorderPane root = new BorderPane();
-        root.setStyle("-fx-background-color: " + COR_FUNDO + ";");
-
-        // --- 1. BARRA SUPERIOR (Título) ---
-        root.setTop(createTopBar());
-
-        // --- 2. FILTROS (Esquerda) ---
-        root.setLeft(createFilterSidebar());
-
-        // --- 3. LISTA DE NOTIFICAÇÕES (Centro) ---
-        root.setCenter(createNotificationList());
-
-        // Define o predicado inicial (mostrar tudo)
-        aplicarFiltro();
-
-        Scene scene = new Scene(root, 900, 600);
-        primaryStage.setScene(scene);
-        primaryStage.setMinHeight(500);
-        primaryStage.setMinWidth(800);
-        primaryStage.show();
+        // 4. Configuração do Layout
+        tela.setTop(createHeader(notificacoes));
+        tela.setCenter(contentBox);
     }
 
     /**
-     * Cria a barra superior com o ícone de menu e o título.
+     * MÉTODO OBRIGATÓRIO: Retorna o layout principal da tela.
+     * Este método é chamado pelo DashboardController.
+     * @return O BorderPane completo da tela de notificações.
      */
-    private Node createTopBar() {
-        HBox topBar = new HBox(20);
-        topBar.setAlignment(Pos.CENTER_LEFT);
-        topBar.setPadding(new Insets(15, 25, 15, 25));
-        topBar.setStyle("-fx-background-color: white; -fx-border-color: " + COR_BORDA + "; -fx-border-width: 0 0 1 0;");
-
-        // Ícone de Menu (como no wireframe)
-        Label lblMenuIcon = new Label("☰");
-        lblMenuIcon.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        lblMenuIcon.setTextFill(Color.web(COR_TEXTO_NORMAL));
-
-        // Título
-        Label lblTitulo = new Label("NOTIFICAÇÕES");
-        lblTitulo.setFont(Font.font("Arial", FontWeight.BOLD, 22));
-        lblTitulo.setTextFill(Color.web(COR_TEXTO_TITULO));
-
-        topBar.getChildren().addAll(lblMenuIcon, lblTitulo);
-        return topBar;
+    public BorderPane getTela() {
+        return tela;
     }
 
-    /**
-     * Cria a barra lateral de filtros (como no wireframe).
-     */
-    private Node createFilterSidebar() {
-        VBox sidebar = new VBox(15);
-        sidebar.setPadding(new Insets(20));
-        sidebar.setStyle("-fx-background-color: white; -fx-border-color: " + COR_BORDA + "; -fx-border-width: 0 1 0 0;");
-        sidebar.setPrefWidth(220);
+    private VBox createHeader(ObservableList<Notification> data) {
+        // Título e Subtítulo
+        Label title = new Label("Central de Notificações");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        title.setTextFill(Color.web("#333333"));
 
-        Label lblFiltro = new Label("Filtro");
-        lblFiltro.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        lblFiltro.setTextFill(Color.web(COR_TEXTO_TITULO));
+        Label subtitle = new Label();
+        subtitle.setFont(Font.font("Arial", 14));
+        subtitle.setTextFill(Color.web("#666666"));
 
-        Separator separator = new Separator();
+        // --- INÍCIO DA CORREÇÃO DO BINDING ---
+        // 1. Coleta todas as readProperty() em um array de ObservableValue
+        javafx.beans.value.ObservableValue<?>[] readProperties = data.stream()
+                .map(Notification::readProperty)
+                .toArray(javafx.beans.value.ObservableValue[]::new);
 
-        // Categorias de Filtro
-        Label lblCategoria = new Label("Categoria");
-        lblCategoria.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        lblCategoria.setTextFill(Color.web(COR_TEXTO_NORMAL));
+        // 2. Combina a lista observável 'data' e o array de propriedades
+        // O Binding precisa observar a lista 'data' (para adições/remoções)
+        // e todas as 'readProperty' (para mudanças de status de leitura)
 
-        filtroCategoria = new ToggleGroup();
+        // Cria um array de dependências, incluindo a lista 'data'
+        javafx.beans.Observable[] dependencies = new javafx.beans.Observable[readProperties.length + 1];
+        dependencies[0] = data; // A lista em si
+        System.arraycopy(readProperties, 0, dependencies, 1, readProperties.length);
 
-        // Adiciona os botões de rádio
-        RadioButton rbTodas = createFilterRadioButton("Todas", "todas");
-        rbTodas.setSelected(true); // Começa selecionado
-        RadioButton rbVendas = createFilterRadioButton("Venda realizada", "venda");
-        RadioButton rbEstoque = createFilterRadioButton("Produto em falta", "estoque");
-        RadioButton rbNaoLidas = createFilterRadioButton("Não lida", "nao_lida");
-        RadioButton rbLidas = createFilterRadioButton("Lida", "lida");
 
-        // Adiciona um listener para aplicar o filtro quando o botão mudar
-        filtroCategoria.selectedToggleProperty().addListener((obs, oldVal, newVal) -> aplicarFiltro());
-
-        sidebar.getChildren().addAll(
-                lblFiltro, separator, lblCategoria,
-                rbTodas, rbVendas, rbEstoque, rbNaoLidas, rbLidas
+        // 3. Aplica o Binding (que agora recebe o array combinado)
+        subtitle.textProperty().bind(
+                Bindings.createStringBinding(() -> {
+                    long unreadCount = data.filtered(n -> !n.isRead()).size();
+                    return String.format("Você tem %d itens não lidos. (Total: %d)", unreadCount, data.size());
+                }, dependencies)
         );
+        // --- FIM DA CORREÇÃO DO BINDING ---
 
-        return sidebar;
+        VBox titleBox = new VBox(5, title, subtitle);
+
+        // Botão de Ação Rápida
+        Button btnMarcarTodosLidos = new Button("Marcar Todos Como Lidos");
+        btnMarcarTodosLidos.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15; -fx-background-radius: 5;");
+        btnMarcarTodosLidos.setCursor(javafx.scene.Cursor.HAND);
+
+        btnMarcarTodosLidos.setOnAction(e -> marcarTodosComoLidos(data));
+
+        // HBox para Título e Botão
+        HBox headerContent = new HBox(15, titleBox, btnMarcarTodosLidos);
+        headerContent.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(titleBox, javafx.scene.layout.Priority.ALWAYS);
+
+        // VBox Principal do Cabeçalho com padding
+        VBox header = new VBox(15, headerContent);
+        header.setPadding(new Insets(30, 20, 20, 20));
+        header.setStyle("-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0.1, 0, 1);");
+
+        return header;
     }
 
     /**
-     * Helper para criar um RadioButton padronizado.
+     * Marca todas as notificações como lidas.
+     * @param notificacoes Lista observável de notificações.
      */
-    private RadioButton createFilterRadioButton(String text, String userData) {
-        RadioButton rb = new RadioButton(text);
-        rb.setToggleGroup(filtroCategoria);
-        rb.setUserData(userData); // Valor que usaremos para filtrar
-        rb.setFont(Font.font("Arial", 13));
-        rb.setTextFill(Color.web(COR_TEXTO_SUBTILO));
-        return rb;
-    }
-
-    /**
-     * Cria a lista central de notificações.
-     */
-    private Node createNotificationList() {
-        // Envolve a lista principal em uma lista filtrável
-        notificacoesFiltradas = new FilteredList<>(todasNotificacoes, p -> true);
-
-        // Cria a ListView e associa à lista filtrada
-        ListView<Notification> listView = new ListView<>(notificacoesFiltradas);
-
-        listView.setCellFactory(param -> new NotificationCell());
-
-        listView.setStyle("-fx-background-color: transparent;"); // Fundo transparente
-
-        // Adiciona padding ao container da lista
-        StackPane containerLista = new StackPane(listView);
-        containerLista.setPadding(new Insets(20));
-
-        return containerLista;
-    }
-
-    /**
-     * Aplica o filtro selecionado à 'FilteredList'.
-     */
-    private void aplicarFiltro() {
-        Toggle selecionado = filtroCategoria.getSelectedToggle();
-        if (selecionado == null) {
-            notificacoesFiltradas.setPredicate(p -> true); // Mostra tudo
-            return;
-        }
-
-        String filtro = (String) selecionado.getUserData();
-
-        notificacoesFiltradas.setPredicate(notificacao -> {
-            switch (filtro) {
-                case "venda":
-                    return notificacao.getType() == NotificationType.INFO;
-                case "estoque":
-                    return notificacao.getType() == NotificationType.ALERTA;
-                case "lida":
-                    return notificacao.isRead();
-                case "nao_lida":
-                    return !notificacao.isRead();
-                case "todas":
-                default:
-                    return true;
+    private void marcarTodosComoLidos(ObservableList<Notification> notificacoes) {
+        // Itera sobre a lista e chama o setter (o Binding faz o resto)
+        for (Notification n : notificacoes) {
+            if (!n.isRead()) { // Apenas marca se ainda não foi lido
+                n.setRead(true);
             }
-        });
+        }
+        System.out.println("✅ Todas as notificações marcadas como lidas.");
     }
 }

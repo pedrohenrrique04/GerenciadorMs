@@ -8,6 +8,10 @@ import javafx.scene.Node;
 import java.io.IOException;
 import java.net.URL;
 
+// IMPORTAÇÕES NECESSÁRIAS PARA ACESSAR AS VIEWS EM JAVA PURO
+import view.TelaRealizarVenda;
+import view.TelaNotificacoes;
+
 public class DashboardController {
 
     @FXML
@@ -21,7 +25,6 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
-        // Seus logs de verificação estavam ótimos, mantive eles
         if (contentArea == null) {
             System.out.println("⚠ ERRO: contentArea NÃO foi injetado. Verifique o fx:id no FXML!");
         } else {
@@ -29,7 +32,7 @@ public class DashboardController {
         }
     }
 
-    // ▶ LÓGICA DE CARREGAMENTO (Com proteção contra erros)
+    // ▶ LÓGICA DE CARREGAMENTO PADRÃO PARA ARQUIVOS FXML
     private void loadView(String fxmlName) {
         try {
             // Verifica se o arquivo existe ANTES de tentar carregar
@@ -51,51 +54,77 @@ public class DashboardController {
         }
     }
 
-    // 👇 AQUI ESTAVAM OS ERROS DE NOMES
+    // ====================================================================
+    // CARREGAR A TELA DE VENDAS (JAVA PURO)
+    // ====================================================================
+    @FXML
+    private void loadRealizarVendas() {
+        System.out.println("🔄 Abrindo tela de Vendas (TelaRealizarVenda.java)...");
+        try {
+            TelaRealizarVenda telaVendas = new TelaRealizarVenda();
+            BorderPane conteudoVendas = telaVendas.getTela(); // Chama getTela()
+            contentArea.setCenter(conteudoVendas);
+            System.out.println("✅ Sucesso ao carregar TelaRealizarVenda.");
+
+        } catch (Exception e) {
+            System.err.println("❌ Erro ao carregar a tela de vendas construída em Java.");
+            e.printStackTrace();
+        }
+    }
+    // ====================================================================
+
+    // ====================================================================
+    // CARREGAR A TELA DE NOTIFICAÇÕES (JAVA PURO)
+    // ====================================================================
+    @FXML
+    private void loadNotificacoes() {
+        System.out.println("🔄 Abrindo tela de Notificações (TelaNotificacoes.java)...");
+        try {
+            TelaNotificacoes telaNotificacoes = new TelaNotificacoes();
+
+            // CHAMA O MÉTODO getTela() QUE DEVE ESTAR NA CLASSE TelaNotificacoes
+            BorderPane conteudoNotificacoes = telaNotificacoes.getTela();
+
+            contentArea.setCenter(conteudoNotificacoes);
+            System.out.println("✅ Sucesso ao carregar TelaNotificacoes.");
+
+        } catch (Exception e) {
+            System.err.println("❌ Erro ao carregar a tela de notificações construída em Java.");
+            e.printStackTrace();
+        }
+    }
+    // ====================================================================
+
+
+    // 👇 CARREGAMENTO DE OUTRAS TELAS FXML
 
     @FXML
     private void loadDashboard() {
-        // Nome na pasta: dashboard-content-view.fxml
         loadView("dashboard-content-view.fxml");
     }
 
     @FXML
     private void loadRelatorios() {
-        // Nome na pasta: Relatorios.fxml (O 'R' maiúsculo é obrigatório!)
         loadView("Relatorios.fxml");
     }
 
     @FXML
     private void loadProdutos() {
-        // Nome na pasta: RelatoriosProdutos.fxml (Parece ser esse pela imagem)
-        // Se você tiver uma tela de cadastro separada, precisa CRIAR o arquivo produtos.fxml
         loadView("RelatoriosProdutos.fxml");
     }
 
     @FXML
     private void loadUsuariosView() {
-        // Nome na pasta: usuario-view.fxml
         loadView("usuario-view.fxml");
     }
 
-    // 👇 ESTES ARQUIVOS NÃO APARECEM NA SUA IMAGEM
-    // Eles vão dar erro "Arquivo não encontrado" no console, mas o app não vai fechar.
-    // Você precisa criar esses arquivos na pasta resources/view
-
-    @FXML
-    private void loadRealizarVendas() {
-        loadView("realizarVendas.fxml"); // ⚠ Arquivo faltando na pasta
-    }
+    // 👇 TELAS QUE PROVAVELMENTE AINDA PRECISAM DE ARQUIVO FXML
 
     @FXML
     private void loadTrocaDevolucao() {
-        loadView("trocaDevolucao.fxml"); // ⚠ Arquivo faltando na pasta
+        loadView("trocaDevolucao.fxml");
     }
 
-    @FXML
-    private void loadNotificacoes() {
-        loadView("notificacoes.fxml"); // ⚠ Arquivo faltando na pasta
-    }
 
     // ▶ ABRIR/FECHAR MENU LATERAL
     @FXML
