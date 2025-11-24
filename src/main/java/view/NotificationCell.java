@@ -108,7 +108,7 @@ public class NotificationCell extends ListCell<Notification> {
                 lblMessage.setTextFill(Color.web("#2e7d32"));
             }
 
-            // --- INÍCIO DA CORREÇÃO ---
+            // --- IN&Iacute;CIO DA CORRE&Ccedil;&Atilde;O ---
             // 5. Define a Opacidade (baseado no status 'lida')
             // Binda a opacidade à propriedade 'read' usando Bindings.when()
             layout.opacityProperty().bind(

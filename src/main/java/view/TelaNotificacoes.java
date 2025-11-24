@@ -40,7 +40,7 @@ public class TelaNotificacoes {
         ObservableList<Notification> notificacoes = NotificacaoDAO.buscarTodasNotificacoes();
         listView.setItems(notificacoes);
 
-        // 3. Área Principal (ListView dentro de um VBox para melhor padding)
+        // 3. &Aacute;rea Principal (ListView dentro de um VBox para melhor padding)
         VBox contentBox = new VBox(10, listView);
         contentBox.setPadding(new Insets(20));
         contentBox.setStyle("-fx-background-color: #f4f7fa;");
@@ -69,7 +69,7 @@ public class TelaNotificacoes {
         subtitle.setFont(Font.font("Arial", 14));
         subtitle.setTextFill(Color.web("#666666"));
 
-        // --- INÍCIO DA CORREÇÃO DO BINDING ---
+        // --- IN&Iacute;CIO DA CORRE&Ccedil;&Atilde;O DO BINDING ---
         // 1. Coleta todas as readProperty() em um array de ObservableValue
         javafx.beans.value.ObservableValue<?>[] readProperties = data.stream()
                 .map(Notification::readProperty)

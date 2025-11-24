@@ -42,13 +42,13 @@ public class Conexao {
 
             } else {
 
-                System.err.println("❌ Variável DB_DRIVER está ausente ou vazia no .env.");
+                System.err.println(" Variável DB_DRIVER está ausente ou vazia no .env.");
 
             }
 
         } catch (ClassNotFoundException e) {
 
-            System.err.println("❌ Erro fatal: O Driver JDBC (" + DRIVER_CLASS + ") não foi encontrado.");
+            System.err.println(" Erro fatal: O Driver JDBC (" + DRIVER_CLASS + ") não foi encontrado.");
 
             throw new RuntimeException("Verifique o JAR do driver MySQL no seu classpath.", e);
 
@@ -62,7 +62,7 @@ public class Conexao {
 
         if (url == null || user == null || pass == null) {
 
-            System.err.println("❌ Variáveis de ambiente incompletas (URL, USER, ou PASS). Verifique o arquivo .env.");
+            System.err.println(" Variáveis de ambiente incompletas (URL, USER, ou PASS). Verifique o arquivo .env.");
 
             return null;
 
@@ -74,7 +74,7 @@ public class Conexao {
 
         } catch (SQLException e) {
 
-            System.err.println("❌ Erro ao conectar ao banco de dados Railway. Verifique as credenciais e a URL.");
+            System.err.println(" Erro ao conectar ao banco de dados Railway. Verifique as credenciais e a URL.");
 
             System.err.println(" Detalhe: " + e.getMessage());
 

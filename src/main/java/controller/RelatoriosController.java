@@ -46,7 +46,7 @@ public class RelatoriosController implements Initializable {
 
     @FXML private Accordion accordionSemanas;
 
-    // --- GRÁFICO MENSAL (substitui o semanal) ---
+    // --- GR&Aacute;FICO MENSAL (substitui o semanal) ---
     @FXML private BarChart<String, Number> graficoMensal;
     @FXML private CategoryAxis eixoMes;
     @FXML private NumberAxis eixoValorMensal;
@@ -162,7 +162,7 @@ public class RelatoriosController implements Initializable {
     }
 
     // ============================
-    //   GRÁFICO MENSAL
+    //   GR&Aacute;FICO MENSAL
     // ============================
 
     /**

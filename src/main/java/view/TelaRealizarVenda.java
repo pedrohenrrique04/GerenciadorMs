@@ -52,7 +52,7 @@ public class TelaRealizarVenda {
 
     public BorderPane getTela() {
         if (produtosDoBanco.isEmpty()) {
-            Label lblErro = new Label("❌ ERRO: Não foi possível carregar os produtos do banco.");
+            Label lblErro = new Label(" ERRO: Não foi possível carregar os produtos do banco.");
             lblErro.setTextFill(Color.web(COR_PERIGO));
             lblErro.setFont(Font.font("Arial", FontWeight.BOLD, 18));
             BorderPane errorPane = new BorderPane(lblErro);

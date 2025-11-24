@@ -26,7 +26,7 @@ public class VendaDAO {
         try {
             conn = Conexao.getConn();
             if (conn == null) {
-                System.err.println("❌ Falha ao obter conexão, venda não registrada.");
+                System.err.println("\u274C Falha ao obter conex\u00E3o, venda n\u00E3o registrada.");
                 return false;
             }
 
@@ -35,7 +35,7 @@ public class VendaDAO {
             try (PreparedStatement stmtItem = conn.prepareStatement(INSERT_VENDA_ITEM, Statement.RETURN_GENERATED_KEYS)) {
 
                 if (venda.getItens() == null || venda.getItens().isEmpty()) {
-                    System.err.println("⚠️ Venda sem itens. Transação desfeita.");
+                    System.err.println("\u26A0\uFE0F Venda sem itens. Transa\u00E7\u00E3o desfeita.");
                     conn.rollback();
                     return false;
                 }
@@ -70,7 +70,7 @@ public class VendaDAO {
             return true;
 
         } catch (Exception e) {
-            System.err.println("❌ Erro transacional ao salvar a Venda. Detalhe: " + e.getMessage());
+            System.err.println("\u274C Erro transacional ao salvar a Venda. Detalhe: " + e.getMessage());
             try {
                 if (conn != null) conn.rollback();
             } catch (SQLException ex) {}
