@@ -1,37 +1,32 @@
 package Dao;
 
 import Model.Venda;
-import java.util.Optional;
+import Model.CartItem;
+import util.Conexao;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 /**
- * DAO mockado (Data Access Object) para a entidade Venda.
- * Nesta versão, apenas simula o registro de vendas, sem conexão real com banco de dados.
+ * DAO para vendas, integrando geração de notificação.
  */
 public class VendaDAO {
 
-    // Simulação de ID sequencial para novas vendas
-    private static int nextId = 1000;
+    private final String INSERT_VENDA_ITEM =
+            "INSERT INTO vendas (produto_id, produto_nome, quantidade, preco_unitario, desconto, forma_pagamento, valor_total) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     /**
-     * Simula o registro de uma nova venda no banco de dados.
-     * Atribui um ID sequencial à venda.
-     * @param venda O objeto Venda a ser registrado.
-     * @return true se o registro foi bem-sucedido (sempre true no mock).
+     * Salva a venda e gera notificação.
      */
-<<<<<<< HEAD
-    public boolean registrarVenda(Venda venda) {
-        // Simula a inserção e atribuição de ID
-        venda.setId(nextId++);
-        System.out.println("✅ Venda registrada no DB (MOCK) com sucesso! ID: " + venda.getId());
-        // Em um DAO real, aqui ocorreria a lógica JDBC (INSERT INTO VENDAS...)
-        return true;
-=======
     public boolean salvarVenda(Venda venda) {
         Connection conn = null;
         try {
             conn = Conexao.getConn();
             if (conn == null) {
-                System.err.println("❌ Falha ao obter conexão, venda não registrada.");
+                System.err.println("\u274C Falha ao obter conex\u00E3o, venda n\u00E3o registrada.");
                 return false;
             }
 
@@ -40,7 +35,7 @@ public class VendaDAO {
             try (PreparedStatement stmtItem = conn.prepareStatement(INSERT_VENDA_ITEM, Statement.RETURN_GENERATED_KEYS)) {
 
                 if (venda.getItens() == null || venda.getItens().isEmpty()) {
-                    System.err.println("⚠️ Venda sem itens. Transação desfeita.");
+                    System.err.println("\u26A0\uFE0F Venda sem itens. Transa\u00E7\u00E3o desfeita.");
                     conn.rollback();
                     return false;
                 }
@@ -75,7 +70,7 @@ public class VendaDAO {
             return true;
 
         } catch (Exception e) {
-            System.err.println("❌ Erro transacional ao salvar a Venda. Detalhe: " + e.getMessage());
+            System.err.println("\u274C Erro transacional ao salvar a Venda. Detalhe: " + e.getMessage());
             try {
                 if (conn != null) conn.rollback();
             } catch (SQLException ex) {}
@@ -85,16 +80,5 @@ public class VendaDAO {
                 try { conn.close(); } catch (SQLException e) {}
             }
         }
->>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
-    }
-
-    /**
-     * Simula a busca de uma Venda pelo ID.
-     * @param id O ID da venda a ser buscada.
-     * @return Um Optional vazio (Mock).
-     */
-    public Optional<Venda> buscarPorId(int id) {
-        // Mock: Implemente a busca real aqui, se necessário.
-        return Optional.empty();
     }
 }

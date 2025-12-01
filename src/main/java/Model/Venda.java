@@ -1,45 +1,48 @@
 package Model;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
- * Modelo de dados para representar uma transação de Venda finalizada.
- * Depende da classe CartItem para representar os itens da venda.
+ * Classe Model para representar a Venda principal (cabeçalho).
+ * CONTÉM DOIS CONSTRUTORES para atender:
+ * 1. A tela PDV (com 3 args, incluindo lista de itens).
+ * 2. O VendaController (com 6 args, que usa campos detalhados).
  */
 public class Venda {
     private int id;
-    private LocalDateTime dataVenda;
-    private double valorTotal;
-    private List<CartItem> itens;
-    private String status;
+    private Date dataHora;
+    private double totalVenda;
+    private String formaPagamento;
+    private List<CartItem> itens; // Lista de itens (Pode ser null se usado pelo construtor de 6 args)
 
-    /**
-     * Construtor para registrar uma nova venda.
-     * @param itens Lista de itens (CartItem) vendidos.
-     * @param valorTotal Valor total final da transação.
-     */
-    public Venda(List<CartItem> itens, double valorTotal) {
-        this.id = 0; // ID será definido pelo DAO ao salvar
-        this.dataVenda = LocalDateTime.now();
-        this.valorTotal = valorTotal;
+    // --- CONSTRUTOR 1: Para PDV (3 argumentos) ---
+    public Venda(double totalVenda, String formaPagamento, List<CartItem> itens) {
+        this.dataHora = new Date();
+        this.totalVenda = totalVenda;
+        this.formaPagamento = formaPagamento;
         this.itens = itens;
-        this.status = "FINALIZADA";
     }
 
-    // --- Getters e Setters ---
+    // --- CONSTRUTOR 2: CORRIGIDO! Para o VendaController (6 argumentos) ---
+    // Este é o construtor que o compilador estava procurando:
+    public Venda(String cliente, int id, double totalProduto, double desconto, String formaPagamento, double acrescimo) {
+        // Assume que 'cliente' é o nome/CPF e 'id' pode ser o ID de cliente
+        this.id = id;
+        this.dataHora = new Date();
+        this.formaPagamento = formaPagamento;
 
+        // Calcula o total da venda baseado nos parâmetros:
+        this.totalVenda = (totalProduto - desconto) + acrescimo;
+
+        this.itens = null; // Como a lista de itens não foi passada, ela é nula aqui.
+    }
+
+    // --- Getters e Setters (Necessários para DAO) ---
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-
-    public LocalDateTime getDataVenda() { return dataVenda; }
-
-    public double getValorTotal() { return valorTotal; }
-    public void setValorTotal(double valorTotal) { this.valorTotal = valorTotal; }
-
+    public double getTotalVenda() { return totalVenda; }
+    public String getFormaPagamento() { return formaPagamento; }
     public List<CartItem> getItens() { return itens; }
-    public void setItens(List<CartItem> itens) { this.itens = itens; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public Date getDataHora() { return dataHora; }
 }

@@ -1,6 +1,6 @@
 package view;
 
-import service.NotificationService;
+import Dao.NotificacaoDAO;
 import Model.Notification;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -14,61 +14,53 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.beans.binding.Bindings;
-import javafx.beans.Observable; // Import necessário
+import javafx.beans.binding.Bindings; // Import necessário
 
 /**
- * Constrói a tela de Notificações, carregando dados do NotificationService.
- * Requer que o NotificationCell.java esteja implementado para renderização correta
- * e que o NotificationService.java tenha os métodos getAllNotifications() e marcarTodasComoLidas().
+ * Constrói a tela de Notificações, carregando dados do DAO e utilizando
+ * a NotificationCell customizada para renderização.
+ * Contém o método obrigatório getTela().
  */
 public class TelaNotificacoes {
 
     private final BorderPane tela;
     private final ListView<Notification> listView;
-    private final NotificationService service;
 
     public TelaNotificacoes() {
-        // Inicializa o serviço (Singleton), assumindo que ele já foi corrigido
-        service = NotificationService.getInstance();
-
         tela = new BorderPane();
-        tela.setStyle("-fx-background-color: #f4f7fa;");
+        tela.setStyle("-fx-background-color: #f4f7fa;"); // Fundo suave
 
         // 1. Componente ListView
         listView = new ListView<>();
-        // Define a fábrica de células (Assumindo que NotificationCell existe)
-        // Se NotificationCell não estiver implementada, substitua por -> new ListCell<Notification>()
+        // Define a fábrica de células para usar a sua classe NotificationCell
         listView.setCellFactory(lv -> new NotificationCell());
-
-        // --- CORRIGIDO: Obtém a lista observável do Service (resolve o erro de getAllNotifications) ---
-        ObservableList<Notification> notificacoes = service.getAllNotifications();
-        listView.setItems(notificacoes);
-
-<<<<<<< HEAD
         listView.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
 
-        // 2. Área Principal
-=======
-        // 3. Área Principal (ListView dentro de um VBox para melhor padding)
->>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
+        // 2. Carrega os dados Mock
+        ObservableList<Notification> notificacoes = NotificacaoDAO.buscarTodasNotificacoes();
+        listView.setItems(notificacoes);
+
+        // 3. &Aacute;rea Principal (ListView dentro de um VBox para melhor padding)
         VBox contentBox = new VBox(10, listView);
         contentBox.setPadding(new Insets(20));
         contentBox.setStyle("-fx-background-color: #f4f7fa;");
 
-        // 3. Configuração do Layout
+        // 4. Configuração do Layout
         tela.setTop(createHeader(notificacoes));
         tela.setCenter(contentBox);
     }
 
     /**
      * MÉTODO OBRIGATÓRIO: Retorna o layout principal da tela.
+     * Este método é chamado pelo DashboardController.
+     * @return O BorderPane completo da tela de notificações.
      */
     public BorderPane getTela() {
         return tela;
     }
 
     private VBox createHeader(ObservableList<Notification> data) {
+        // Título e Subtítulo
         Label title = new Label("Central de Notificações");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         title.setTextFill(Color.web("#333333"));
@@ -77,37 +69,29 @@ public class TelaNotificacoes {
         subtitle.setFont(Font.font("Arial", 14));
         subtitle.setTextFill(Color.web("#666666"));
 
-<<<<<<< HEAD
-        // --- CORREÇÃO DO BINDING REATIVO ---
-=======
-        // --- INÍCIO DA CORREÇÃO DO BINDING ---
+        // --- IN&Iacute;CIO DA CORRE&Ccedil;&Atilde;O DO BINDING ---
         // 1. Coleta todas as readProperty() em um array de ObservableValue
         javafx.beans.value.ObservableValue<?>[] readProperties = data.stream()
-                .map(Notification::readProperty)
+                .map(Notification::lidaProperty)
                 .toArray(javafx.beans.value.ObservableValue[]::new);
->>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
 
-        // O Bindings.createStringBinding espera uma lista de objetos Observable como dependências.
-        // Como o NotificationService inicializa a lista 'data' com um PropertyExtractor
-        // (Notification::lidaProperty), observar apenas a lista é suficiente para reagir a
-        // adições/remoções e mudanças na propriedade 'lida' de qualquer item.
+        // 2. Combina a lista observável 'data' e o array de propriedades
+        // O Binding precisa observar a lista 'data' (para adições/remoções)
+        // e todas as 'readProperty' (para mudanças de status de leitura)
 
-        // CORRIGIDO: Removida a sintaxe incorreta que causava o erro "incompatible types"
-        Observable[] dependencies = new Observable[] { data };
+        // Cria um array de dependências, incluindo a lista 'data'
+        javafx.beans.Observable[] dependencies = new javafx.beans.Observable[readProperties.length + 1];
+        dependencies[0] = data; // A lista em si
+        System.arraycopy(readProperties, 0, dependencies, 1, readProperties.length);
 
 
-        // Cria o Binding que calcula a contagem
+        // 3. Aplica o Binding (que agora recebe o array combinado)
         subtitle.textProperty().bind(
                 Bindings.createStringBinding(() -> {
-                    // Contagem de não lidas
-                    long unreadCount = data.stream()
-                            .filter(n -> !n.isLida()) // Usa o método correto do Model
-                            .count();
-
+                    long unreadCount = data.filtered(n -> !n.isLida()).size();
                     return String.format("Você tem %d itens não lidos. (Total: %d)", unreadCount, data.size());
                 }, dependencies)
         );
-
         // --- FIM DA CORREÇÃO DO BINDING ---
 
         VBox titleBox = new VBox(5, title, subtitle);
@@ -117,8 +101,7 @@ public class TelaNotificacoes {
         btnMarcarTodosLidos.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 15; -fx-background-radius: 5;");
         btnMarcarTodosLidos.setCursor(javafx.scene.Cursor.HAND);
 
-        // --- CORRIGIDO: Usa o método implementado 'marcarTodasComoLidas()' (resolve o segundo erro) ---
-        btnMarcarTodosLidos.setOnAction(e -> service.marcarTodasComoLidas());
+        btnMarcarTodosLidos.setOnAction(e -> marcarTodosComoLidos(data));
 
         // HBox para Título e Botão
         HBox headerContent = new HBox(15, titleBox, btnMarcarTodosLidos);
@@ -131,5 +114,19 @@ public class TelaNotificacoes {
         header.setStyle("-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0.1, 0, 1);");
 
         return header;
+    }
+
+    /**
+     * Marca todas as notificações como lidas.
+     * @param notificacoes Lista observável de notificações.
+     */
+    private void marcarTodosComoLidos(ObservableList<Notification> notificacoes) {
+        // Itera sobre a lista e chama o setter (o Binding faz o resto)
+        for (Notification n : notificacoes) {
+            if (!n.isLida()) { // Apenas marca se ainda não foi lido
+                n.setLida(true);
+            }
+        }
+        System.out.println("✅ Todas as notificações marcadas como lidas.");
     }
 }
