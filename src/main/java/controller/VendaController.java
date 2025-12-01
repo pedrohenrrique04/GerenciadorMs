@@ -1,89 +1,201 @@
 package controller;
 
-import Model.Venda;
 import Dao.VendaDAO;
-import Dao.ProdutoDAO; // 🚨 Importação necessária
+<<<<<<< HEAD
+import Dao.ProdutoDAO;
+import Model.Venda;
 import Model.CartItem;
-import Model.ProdutoModel; // 🚨 Importação necessária
-
+import Model.ProdutoModel;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import javax.swing.JOptionPane;
+// Imports da View mantidos como placeholders se existirem
 
-import javafx.collections.FXCollections; // 🚨 Importação necessária
-import javafx.collections.ObservableList; // 🚨 Importação necessária
-import javafx.fxml.FXML; // 🚨 Importação necessária para usar @FXML (se aplicável)
-import javafx.scene.control.ListView; // 🚨 Importação do componente de lista (AJUSTE se for TableView)
+/**
+ * Controlador para gerenciar as operações de Vendas.
+ */
+public class VendaController { // <-- Abertura da Classe
+
+    private final VendaDAO vendaDAO;
+    private final ProdutoDAO produtoDAO;
+    private List<CartItem> carrinho;
+    private double totalVenda;
+=======
+import java.util.List;
+import Model.CartItem; // Importação assumida
 
 /**
  * Controlador responsável por mediar as operações de venda entre a View e o VendaDAO.
+ * A implementação aqui é simplificada para apenas demonstrar a correção do erro.
  */
 public class VendaController {
 
-    // 🚨 1. ADICIONE O CAMPO FXML DA SUA LISTA DE PRODUTOS
-    // Se a lista de produtos é um componente visível na sua tela de vendas:
-    // AJUSTE o nome da variável se for diferente no seu código.
-    @FXML
-    private ListView<ProdutoModel> listaProdutosDisponiveis;
-
     private final VendaDAO vendaDAO;
-    private final ProdutoDAO produtoDAO; // 🚨 Adicionado ProdutoDAO
-    private ObservableList<ProdutoModel> produtosObservableList; // 🚨 Lista observável para o JavaFX
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
 
-    public VendaController() {
+    // Tipo de View alterado para Object
+    public VendaController(Object view) {
         this.vendaDAO = new VendaDAO();
-        this.produtoDAO = new ProdutoDAO(); // Inicializa o ProdutoDAO
+<<<<<<< HEAD
+        this.produtoDAO = new ProdutoDAO();
+        this.carrinho = new ArrayList<>();
+        this.totalVenda = 0.0;
+        // Inicialização da view removida ou adaptada
     }
 
-    // 🚨 2. ADICIONE O MÉTODO DE INICIALIZAÇÃO DA INTERFACE
-    // Este método é chamado automaticamente após a injeção dos componentes FXML.
-    @FXML
-    public void initialize() {
-        // Inicializa a lista observável
-        produtosObservableList = FXCollections.observableArrayList();
-
-        // Associa a lista ao componente visual
-        if (listaProdutosDisponiveis != null) {
-            listaProdutosDisponiveis.setItems(produtosObservableList);
+    public void adicionarProdutoAoCarrinho(int idProduto, int quantidade) { // <-- Abertura do Método
+        if (quantidade <= 0) {
+            JOptionPane.showMessageDialog(null, "A quantidade deve ser maior que zero.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-        // 🚨 CHAMA O RECARREGAMENTO FORÇADO
-        recarregarProdutosDoBanco();
-    }
+        Optional<ProdutoModel> produtoOpt = produtoDAO.buscarPorId(idProduto);
 
-    // 🚨 3. MÉTODO CHAVE DA CORREÇÃO: Força o recarregamento do banco
-    public void recarregarProdutosDoBanco() {
-        if (produtosObservableList == null) {
-            // Garante a inicialização
-            produtosObservableList = FXCollections.observableArrayList();
+        if (produtoOpt.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Produto não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-        // 1. Limpa a lista atual (libera o cache)
-        produtosObservableList.clear();
+        ProdutoModel produto = produtoOpt.get();
 
-        // 2. Busca dados frescos do banco (incluindo o novo produto)
-        List<ProdutoModel> produtosDoBanco = produtoDAO.listarTodos();
+        if (produto.getQuantidade() < quantidade) {
+            JOptionPane.showMessageDialog(null, "Estoque insuficiente. Disponível: " + produto.getQuantidade(), "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        // 3. Adiciona os novos dados à lista da UI
-        produtosObservableList.addAll(produtosDoBanco);
+        CartItem itemExistente = carrinho.stream()
+                .filter(item -> item.getIdProduto() == idProduto)
+                .findFirst()
+                .orElse(null);
+
+        if (itemExistente != null) {
+            itemExistente.setQuantidade(itemExistente.getQuantidade() + quantidade);
+        } else {
+            carrinho.add(new CartItem(idProduto, produto.getNome(), quantidade, produto.getPrecoVenda()));
+        }
+
+        recalcularTotal();
+    } // <-- Fechamento do Método
+
+    public void removerItemDoCarrinho(int index) { // <-- Abertura do Método
+        if (index >= 0 && index < carrinho.size()) {
+            carrinho.remove(index);
+            recalcularTotal();
+        }
+    } // <-- Fechamento do Método
+
+    private void recalcularTotal() { // <-- Abertura do Método
+        totalVenda = carrinho.stream()
+                .mapToDouble(item -> item.getPrecoVenda() * item.getQuantidade())
+                .sum();
+    } // <-- Fechamento do Método
+
+    // Método para finalizar a venda com dados completos
+    public void finalizarVenda(String cpf, int idFuncionario, double valorTotal, double valorPago, String tipoPagamento, double troco) { // <-- Abertura do Método
+        if (carrinho.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "O carrinho está vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Chamada de construtor ajustada para a assinatura Venda(List<CartItem>, double)
+        Venda novaVenda = new Venda(carrinho, totalVenda);
+
+        // Chamada de método ajustada para salvar()
+        vendaDAO.salvar(novaVenda);
+
+        // Atualizar estoque
+        for (CartItem item : carrinho) {
+            produtoDAO.buscarPorId(item.getIdProduto()).ifPresent(p -> {
+                p.setQuantidade(p.getQuantidade() - item.getQuantidade());
+                produtoDAO.salvar(p);
+            });
+        }
+
+        JOptionPane.showMessageDialog(null, "Venda finalizada com sucesso! Total: R$ " + totalVenda, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        limparCarrinho();
+    } // <-- Fechamento do Método
+
+    // Método para finalizar a venda simplificado
+    public void finalizarVendaSimplificada(double valorTotal, String tipoPagamento) { // <-- Abertura do Método
+        if (carrinho.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "O carrinho está vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Chamada de construtor ajustada para a assinatura Venda(List<CartItem>, double)
+        Venda novaVenda = new Venda(carrinho, totalVenda);
+
+        // Chamada de método ajustada para salvar()
+        vendaDAO.salvar(novaVenda);
+
+        // Atualizar estoque
+        for (CartItem item : carrinho) {
+            produtoDAO.buscarPorId(item.getIdProduto()).ifPresent(p -> {
+                p.setQuantidade(p.getQuantidade() - item.getQuantidade());
+                produtoDAO.salvar(p);
+            });
+        }
+
+        JOptionPane.showMessageDialog(null, "Venda finalizada com sucesso! Total: R$ " + totalVenda, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        limparCarrinho();
+    } // <-- Fechamento do Método
+
+    public void limparCarrinho() { // <-- Abertura do Método
+        carrinho.clear();
+        recalcularTotal();
+    } // <-- Fechamento do Método
+
+    public List<CartItem> getCarrinho() { // <-- Abertura do Método
+        return carrinho;
+    } // <-- Fechamento do Método
+
+    public double getTotalVenda() { // <-- Abertura do Método
+        return totalVenda;
+    } // <-- Fechamento do Método
+
+    public List<Venda> listarVendas() { // <-- Abertura do Método
+        return vendaDAO.listarTodos();
+    } // <-- Fechamento do Método
+
+    public Optional<Venda> buscarVendaPorId(int id) { // <-- Abertura do Método
+        return vendaDAO.buscarPorId(id);
+    } // <-- Fechamento do Método
+
+    public void deletarVenda(int id) { // <-- Abertura do Método
+        if (vendaDAO.deletar(id)) {
+            JOptionPane.showMessageDialog(null, "Venda deletada com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro ao deletar venda.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    } // <-- Fechamento do Método
+} // <-- Fechamento da Classe
+=======
     }
 
-    // --- Métodos Existentes (Mantidos) ---
-
+    // Método que estava causando o erro de construtor (agora resolvido pela Model.Venda)
     public boolean criarVenda(String cliente, int id, double totalProduto, double desconto, String formaPagamento, double acrescimo) {
-        // ... (lógica existente) ...
-        Venda novaVenda = new Venda(cliente, id, totalProduto, desconto, formaPagamento, acrescimo);
+
+        // 1. Resolve o erro de construtor (Venda agora tem 6 argumentos)
+        Venda novaVenda = new Venda(
+                cliente,
+                id,
+                totalProduto,
+                desconto,
+                formaPagamento,
+                acrescimo
+        );
+
+        // 2. Resolve o erro do método: registrarVenda -> salvarVenda
         return vendaDAO.salvarVenda(novaVenda);
     }
 
+    // Exemplo de outro método que poderia ser chamado pela tela de PDV
     public boolean criarVendaPDV(double totalVenda, String formaPagamento, List<CartItem> itens) {
-        // ... (lógica existente) ...
         Venda novaVenda = new Venda(totalVenda, formaPagamento, itens);
         return vendaDAO.salvarVenda(novaVenda);
     }
-
-    // 🚨 4. ADICIONE UM MÉTODO QUE DEVE SER CHAMADO APÓS CADA CADASTRO BEM-SUCEDIDO
-    // Se o seu código que cadastra um produto chama este controller,
-    // ele pode chamar este método para atualizar.
-    public void notificarCadastroDeProduto() {
-        recarregarProdutosDoBanco();
-    }
 }
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)

@@ -5,7 +5,10 @@
 <?import javafx.geometry.Insets?>
 
 <VBox fx:id="sideMenu"
+<<<<<<< HEAD
       fx:controller="controller.MenuLateralController"
+=======
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
       prefWidth="220.0" maxWidth="240.0"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
@@ -27,6 +30,7 @@
     <!-- BOTÕES PRINCIPAIS -->
     <VBox spacing="8" style="-fx-padding: 10 0 0 0;">
 
+<<<<<<< HEAD
         <Button fx:id="btnDashboard" text="📊  DASHBOARD" prefWidth="220"
                 onAction="#abrirDashboard"
                 style="-fx-text-fill: #E2E8F0; -fx-padding: 12 20;
@@ -85,6 +89,37 @@
     </VBox>
 
 
+=======
+        <Button text="🏠  INÍCIO" prefWidth="220"
+                style="-fx-text-fill: #E2E8F0; -fx-padding: 12 20;
+                       -fx-font-size: 13px; -fx-font-weight: 600;
+                       -fx-background-color: transparent;
+                       -fx-alignment: CENTER_LEFT; -fx-border-color: transparent;
+                       -fx-border-width: 0; -fx-cursor: hand; -fx-border-radius: 8;"/>
+
+        <Button text="📊  RELATÓRIOS" prefWidth="220"
+                style="-fx-text-fill: #E2E8F0; -fx-padding: 12 20;
+                       -fx-font-size: 13px; -fx-font-weight: 600;
+                       -fx-background-color: transparent;
+                       -fx-alignment: CENTER_LEFT; -fx-border-color: transparent;
+                       -fx-border-width: 0; -fx-cursor: hand; -fx-border-radius: 8;"/>
+
+        <Button text="⚙️  CONFIGURAÇÕES" prefWidth="220"
+                style="-fx-text-fill: #E2E8F0; -fx-padding: 12 20;
+                       -fx-font-size: 13px; -fx-font-weight: 600;
+                       -fx-background-color: transparent;
+                       -fx-alignment: CENTER_LEFT; -fx-border-color: transparent;
+                       -fx-border-width: 0; -fx-cursor: hand; -fx-border-radius: 8;"/>
+
+        <Button text="⚙️  CONFIGURAÇÕES" prefWidth="220"
+                style="-fx-text-fill: #E2E8F0; -fx-padding: 12 20;
+                       -fx-font-size: 13px; -fx-font-weight: 600;
+                       -fx-background-color: transparent;
+                       -fx-alignment: CENTER_LEFT; -fx-border-color: transparent;
+                       -fx-border-width: 0; -fx-cursor: hand; -fx-border-radius: 8;"/>
+    </VBox>
+
+>>>>>>> parent of ba0e6b0 (telaprodutos&telarealizarvendacomBANCO)
     <Region VBox.vgrow="ALWAYS"/>
 
     <!-- BOTÃO DE SAIR -->

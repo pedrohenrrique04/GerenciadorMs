@@ -1,7 +1,7 @@
 package view;
 
+import Dao.ProdutoDAO;
 import Model.ProdutoModel;
-import Dao.ProdutoDAO; // 🚨 IMPORTANTE: Adiciona a dependência com o MySQL
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -16,7 +16,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.File;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,9 +29,6 @@ import java.util.stream.Collectors;
  * Funciona como um componente a ser inserido em um BorderPane (Dashboard).
  */
 public class TelaProdutos {
-
-    // 🚨 CORREÇÃO 1: Objeto DAO para interagir com o MySQL
-    private final ProdutoDAO produtoDAO = new ProdutoDAO();
 
     private List<ProdutoModel> produtos = new ArrayList<>();
     private List<ProdutoModel> produtosFiltrados = new ArrayList<>();
@@ -50,7 +47,7 @@ public class TelaProdutos {
     private Button btnLimparPesquisa;
 
     private static final String IMAGES_DIR = "produto_images/";
-    // 🚨 DATA_FILE REMOVIDO: Não usaremos mais persistência em arquivo
+    private static final String DATA_FILE = "produtos.dat";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     // Cores do Tema
@@ -64,14 +61,10 @@ public class TelaProdutos {
     // =================================================================
     public BorderPane getTela() {
         criarDiretorioImagens();
-
-        // 🚨 CORREÇÃO 2: Carrega a lista do MySQL
-        carregarProdutosDoBanco();
+        carregarProdutosSalvos();
 
         if (produtos.isEmpty()) {
-            // Se o banco estiver vazio, carrega exemplos (e os salva no banco)
             carregarProdutosExemplo();
-            salvarProdutosExemploNoBanco();
         }
 
         produtosFiltrados.addAll(produtos);
@@ -85,14 +78,16 @@ public class TelaProdutos {
         SplitPane centro = new SplitPane();
         centro.setDividerPositions(0.22);
 
+        // 🚨 MUDANÇA: Envolvendo a barra lateral de filtros em um ScrollPane
         VBox barraLateralConteudo = criarBarraLateralFiltros();
         ScrollPane scrollFiltros = new ScrollPane(barraLateralConteudo);
-        scrollFiltros.setFitToWidth(true);
-        scrollFiltros.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollFiltros.setFitToWidth(true); // Garante que a barra lateral preencha a largura
+        scrollFiltros.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Remove barra horizontal
         scrollFiltros.setStyle("-fx-background: white; -fx-border-color: #e0e0e0; -fx-border-width: 0 2 0 0; -fx-border-color: " + COR_PRIMARIA + ";");
 
         scrollGrade = criarGradeProdutos();
 
+        // 🚨 MUDANÇA: Usando o ScrollPane para a barra de filtros
         centro.getItems().addAll(scrollFiltros, scrollGrade);
         root.setCenter(centro);
 
@@ -100,7 +95,7 @@ public class TelaProdutos {
     }
     // =================================================================
 
-    // --- Métodos de Persistência e Inicialização (Corrigidos) ---
+    // --- Métodos de Persistência e Inicialização ---
 
     private void criarDiretorioImagens() {
         File diretorio = new File(IMAGES_DIR);
@@ -109,24 +104,26 @@ public class TelaProdutos {
         }
     }
 
-    // 🚨 NOVO: Método para carregar do Banco (substitui carregarProdutosSalvos)
-    private void carregarProdutosDoBanco() {
-        produtos = produtoDAO.listarTodos();
-        System.out.println("✅ " + produtos.size() + " produtos carregados do MySQL.");
-    }
-
-    // 🚨 NOVO: Método para persistir os exemplos iniciais no Banco
-    private void salvarProdutosExemploNoBanco() {
-        for (ProdutoModel produto : produtos) {
-            // Cria os exemplos apenas se o produto ainda não tiver um ID válido (o DAO verifica e insere)
-            if (produto.getId() == 0) {
-                produtoDAO.criar(produto);
-            }
+    @SuppressWarnings("unchecked")
+    private void carregarProdutosSalvos() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
+            produtos = (List<ProdutoModel>) ois.readObject();
+            System.out.println("✅ " + produtos.size() + " produtos carregados do arquivo.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Arquivo de dados não encontrado. Iniciando com produtos de exemplo.");
+        } catch (Exception e) {
+            System.err.println("Erro ao carregar produtos salvos: " + e.getMessage());
         }
     }
 
-
-    // 🚨 MÉTODOS DE SERIALIZAÇÃO EM ARQUIVO FORAM REMOVIDOS COMPLETAMENTE
+    public void salvarProdutos() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
+            oos.writeObject(produtos);
+            System.out.println("💾 Produtos salvos com sucesso.");
+        } catch (Exception e) {
+            System.err.println("Erro ao salvar produtos: " + e.getMessage());
+        }
+    }
 
     // --- Métodos de Criação de UI (Topo, Lateral, Grade) ---
 
@@ -178,7 +175,7 @@ public class TelaProdutos {
         barraPesquisa.setPadding(new Insets(10, 0, 0, 0));
 
         campoPesquisa = new TextField();
-        campoPesquisa.setPromptText("Pesquisar produtos por nome, categoria, cor...");
+        campoPesquisa.setPromptText("🔍 Pesquisar produtos por nome, categoria, cor...");
         campoPesquisa.setPrefWidth(400);
         campoPesquisa.setPrefHeight(40);
         campoPesquisa.setStyle("-fx-font-size: 14; -fx-background-radius: 20; -fx-border-radius: 20; -fx-background-color: white; -fx-border-color: " + COR_DESTAQUE + ";");
@@ -202,9 +199,11 @@ public class TelaProdutos {
     }
 
     private VBox criarBarraLateralFiltros() {
+        // 🚨 MUDANÇA: Remoção dos estilos de borda e cor de fundo, pois serão aplicados no ScrollPane no método getTela()
         VBox barraLateral = new VBox(20);
         barraLateral.setPadding(new Insets(25));
         barraLateral.setPrefWidth(280);
+        // barraLateral.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-width: 0 2 0 0; -fx-border-color: " + COR_PRIMARIA + ";"); // Estilo movido para ScrollPane
 
         Label tituloFiltros = new Label("FILTROS");
         tituloFiltros.setFont(Font.font("System", FontWeight.BOLD, 20));
@@ -298,17 +297,18 @@ public class TelaProdutos {
         gradeProdutos.setPadding(new Insets(25));
         gradeProdutos.setHgap(20);
         gradeProdutos.setVgap(20);
-        gradeProdutos.setStyle("-fx-background-color: #f5f7fa;");
+        gradeProdutos.setStyle("-fx-background-color: #f5f7fa;"); // Fundo cinza claro da área de rolagem
 
         atualizarGradeProdutos();
 
         ScrollPane scroll = new ScrollPane(gradeProdutos);
         scroll.setFitToWidth(true);
+        // O ScrollPane para a grade de produtos já estava configurado corretamente
         scroll.setStyle("-fx-background: #f5f7fa; -fx-border-color: transparent;");
         return scroll;
     }
 
-    // --- Métodos de Criação de Card, Lógica e Janelas Modais ---
+    // --- Métodos de Criação de Card, Lógica e Janelas Modais (Mantidos) ---
 
     private VBox criarCardProduto(ProdutoModel produto) {
         VBox card = new VBox(12);
@@ -500,7 +500,7 @@ public class TelaProdutos {
             mensagemVazia.setAlignment(Pos.CENTER);
             mensagemVazia.setPadding(new Insets(50));
 
-            Label icone = new Label("procurar");
+            Label icone = new Label("🔍");
             icone.setFont(Font.font("System", 48));
 
             Label texto = new Label("Nenhum produto encontrado");
@@ -554,16 +554,15 @@ public class TelaProdutos {
     }
 
     private void carregarProdutosExemplo() {
-        // IDs zerados para forçar o salvamento no banco, caso a lista esteja vazia
-        produtos.add(new ProdutoModel(0, "Tênis Nike Air Force 1", 50, 299.99, 799.99,
+        produtos.add(new ProdutoModel(1, "Tênis Nike Air Force 1", 50, 299.99, 799.99,
                 LocalDate.now().minusDays(10), null, "Calçados", "Masculino", "Branco"));
-        produtos.add(new ProdutoModel(0, "Camiseta Basic Cotton", 100, 29.99, 79.99,
+        produtos.add(new ProdutoModel(2, "Camiseta Basic Cotton", 100, 29.99, 79.99,
                 LocalDate.now().minusDays(5), LocalDate.now().plusDays(15), "Roupas", "Feminino", "Preto"));
-        produtos.add(new ProdutoModel(0, "Bolsa Couro Legítimo", 15, 199.99, 459.99,
+        produtos.add(new ProdutoModel(3, "Bolsa Couro Legítimo", 15, 199.99, 459.99,
                 LocalDate.now().minusDays(2), LocalDate.now().plusDays(30), "Acessórios", "Feminino", "Marrom"));
-        produtos.add(new ProdutoModel(0, "Jaqueta Jeans Masculina", 25, 89.99, 199.99,
+        produtos.add(new ProdutoModel(4, "Jaqueta Jeans Masculina", 25, 89.99, 199.99,
                 LocalDate.now().minusDays(7), null, "Roupas", "Masculino", "Azul"));
-        produtos.add(new ProdutoModel(0, "Relógio Smartwatch", 20, 199.99, 399.99,
+        produtos.add(new ProdutoModel(5, "Relógio Smartwatch", 20, 199.99, 399.99,
                 LocalDate.now().minusDays(15), LocalDate.now().plusDays(7), "Acessórios", "Unissex", "Preto"));
     }
 
@@ -657,7 +656,7 @@ public class TelaProdutos {
         HBox botoesAcao = new HBox(15);
         botoesAcao.setAlignment(Pos.CENTER_RIGHT);
 
-        Button btnEditar = new Button("Editar Produto");
+        Button btnEditar = new Button("📝 Editar Produto");
         btnEditar.setStyle("-fx-background-color: " + COR_DESTAQUE + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-pref-width: 150;");
 
         Button btnFechar = new Button("Fechar");
@@ -734,7 +733,6 @@ public class TelaProdutos {
         corCombo.getItems().addAll("Branco", "Preto", "Verde", "Azul", "Vermelho", "Amarelo", "Marrom", "Cinza");
         corCombo.setValue("Branco");
 
-        // --- CONSTRU&Ccedil;&Atilde;O DO FORMUL&Aacute;RIO ---
         adicionarCampoFormulario(formulario, "Nome do Produto:", nomeField, 0);
         adicionarCampoFormularioCombo(formulario, "Categoria:", categoriaCombo, 1);
         adicionarCampoFormularioCombo(formulario, "Gênero:", generoCombo, 2);
@@ -771,24 +769,17 @@ public class TelaProdutos {
                     throw new IllegalArgumentException("O nome do produto não pode ser vazio.");
                 }
 
-                // 1. Coleta e conversão (mantida)
                 int quantidade = Integer.parseInt(quantidadeField.getText());
-                // Permite vírgula ou ponto, convertendo para ponto antes de Double.parseDouble
                 double precoCusto = Double.parseDouble(precoCustoField.getText().replace(',', '.'));
                 double precoVenda = Double.parseDouble(precoVendaField.getText().replace(',', '.'));
-
-                if (precoVenda <= 0) {
-                    throw new IllegalArgumentException("O preço de venda deve ser maior que zero.");
-                }
 
                 LocalDate dataReposicao = null;
                 if (!dataReposicaoField.getText().isEmpty()) {
                     dataReposicao = LocalDate.parse(dataReposicaoField.getText(), DATE_FORMATTER);
                 }
 
-                // O ID é 0 para que o DAO saiba que é um novo produto (o banco gera o ID)
                 ProdutoModel novoProduto = new ProdutoModel(
-                        0, // ID 0 para novo produto
+                        produtos.size() + 1,
                         nome,
                         quantidade,
                         precoCusto,
@@ -802,34 +793,22 @@ public class TelaProdutos {
 
                 novoProduto.setDescricao(descricaoArea.getText());
 
-                //  CORRE&Ccedil;&Atilde;O CR&Iacute;TICA: USA O DAO PARA SALVAR NO BANCO DE DADOS
-                ProdutoModel produtoSalvo = produtoDAO.criar(novoProduto);
+                produtos.add(novoProduto);
+                salvarProdutos();
+                aplicarFiltros();
+                janelaNovo.close();
 
-                if (produtoSalvo != null && produtoSalvo.getId() > 0) {
-                    // 🚨 CORREÇÃO: Atualiza a lista da UI com o objeto RETORNADO do banco (com ID correto)
-                    produtos.add(produtoSalvo);
-                    aplicarFiltros(); // Re-aplica filtros e atualiza a grade
-
-                    janelaNovo.close();
-
-                    Alert sucesso = new Alert(Alert.AlertType.INFORMATION);
-                    sucesso.setTitle("Sucesso");
-                    sucesso.setHeaderText(null);
-                    sucesso.setContentText("✅ Novo produto '" + nome + "' adicionado ao BANCO DE DADOS com sucesso!");
-                    sucesso.showAndWait();
-                } else {
-                    Alert erro = new Alert(Alert.AlertType.ERROR);
-                    erro.setTitle("Erro de Persistência");
-                    erro.setHeaderText("Falha ao adicionar produto");
-                    erro.setContentText("O produto não foi salvo no banco de dados. Verifique o console para detalhes da exceção SQL (print stack trace).");
-                    erro.showAndWait();
-                }
+                Alert sucesso = new Alert(Alert.AlertType.INFORMATION);
+                sucesso.setTitle("Sucesso");
+                sucesso.setHeaderText(null);
+                sucesso.setContentText("Novo produto '" + nome + "' adicionado com sucesso!");
+                sucesso.showAndWait();
 
             } catch (NumberFormatException ex) {
                 Alert erro = new Alert(Alert.AlertType.ERROR);
                 erro.setTitle("Erro de Formato");
                 erro.setHeaderText("Erro ao adicionar produto");
-                erro.setContentText("Certifique-se de que a Quantidade é um número inteiro e os Preços (Custo e Venda) são números válidos.");
+                erro.setContentText("Certifique-se de que a Quantidade é um número inteiro e os Preços (Custo e Venda) são números válidos (ex: 12.50).");
                 erro.showAndWait();
             } catch (IllegalArgumentException ex) {
                 Alert erro = new Alert(Alert.AlertType.ERROR);
@@ -847,6 +826,4 @@ public class TelaProdutos {
         janelaNovo.setScene(scene);
         janelaNovo.showAndWait();
     }
-
-    // ... (restante dos métodos inalterados) ...
 }

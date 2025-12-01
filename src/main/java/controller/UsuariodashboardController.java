@@ -1,15 +1,12 @@
 package controller;
 
-import Model.NivelAcesso;
-import Model.Usuario; // 🚨 CORREÇÃO: Usar o nome correto da classe Model (Usuario)
-import Dao.UsuarioDAO; // 🚨 IMPORTANTE: Importa a classe de persistência
+import Model.Usuariodashboard;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.*; // Importa TextField, PasswordField, ComboBox, Alert, etc.
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import java.util.List;
 
 public class UsuariodashboardController {
 
@@ -20,16 +17,13 @@ public class UsuariodashboardController {
     private TextField campoNome;
 
     @FXML
-    private PasswordField campoSenha;
+    private PasswordField campoSenha; // CORREÇÃO: Usar PasswordField para senhas
 
     @FXML
     private ComboBox<String> comboFuncoes;
 
-    // A lista agora reflete o estado do banco e é usada apenas para a visualização
-    private ObservableList<Usuario> listaDeUsuarios = FXCollections.observableArrayList();
-
-    // 🚨 INSTÂNCIA DO DAO: Injetamos a dependência
-    private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    // Lista temporária (apenas na memória)
+    private ObservableList<Usuariodashboard> listaDeUsuarios = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -37,57 +31,43 @@ public class UsuariodashboardController {
         comboFuncoes.getItems().setAll("Administrador", "Funcionario");
         comboFuncoes.getSelectionModel().selectFirst();
 
-        // 🚨 CHAMA O BANCO: Carrega usuários existentes assim que a tela abre
-        carregarUsuariosDoBanco();
+        // DICA: Aqui você chamaria o banco para carregar usuários existentes
+        // carregarUsuariosDoBanco();
     }
 
     // =====================================================
-    // CARREGAR DADOS DO BANCO
-    // =====================================================
-    private void carregarUsuariosDoBanco() {
-        System.out.println("Buscando usuários existentes no MySQL...");
-        List<Usuario> usuarios = usuarioDAO.listarTodos();
-
-        listaDeUsuarios.clear();
-        // Adiciona todos os usuários buscados na lista visual
-        listaDeUsuarios.addAll(usuarios);
-
-        // Atualiza o VBox visualmente
-        renderizarLista();
-        System.out.println("Lista de usuários carregada. Total: " + usuarios.size());
-    }
-
-    // =====================================================
-    // SALVAR (AGORA COM PERSISTÊNCIA NO BANCO)
+    // SALVAR
     // =====================================================
     @FXML
     private void handleSalvarNovoUsuario() {
         String nome = campoNome.getText();
         String senha = campoSenha.getText();
-        String funcaoTexto = comboFuncoes.getValue(); // "Administrador" ou "Funcionario"
+        String funcao = comboFuncoes.getValue();
 
         // Validação
-        if (nome.isEmpty() || senha.isEmpty() || funcaoTexto == null) {
+        if (nome.isEmpty() || senha.isEmpty() || funcao == null) {
             alert("Preencha todos os campos!");
             return;
         }
 
-        // 1. Converte o texto da função para o Enum
-        NivelAcesso nivel = NivelAcesso.fromString(funcaoTexto);
+        // 1. Cria o objeto Modelo
+        Usuariodashboard user = new Usuariodashboard(nome, senha, funcao);
 
-        // 2. Cria o objeto Modelo
-        Usuario novoUsuario = new Usuario(nome, senha, nivel);
+        // ---------------------------------------------------------
+        // ⚠ AQUI ENTRARIA A CONEXÃO COM O BANCO DE DADOS (DAO)
+        // Exemplo:
+        // UsuarioDAO dao = new UsuarioDAO();
+        // dao.salvar(user);
+        // ---------------------------------------------------------
 
-        // 3. 🚨 PERSISTÊNCIA: Chama o DAO para salvar no MySQL
-        if (usuarioDAO.salvar(novoUsuario)) {
-            // 4. Atualiza a lista visual
-            listaDeUsuarios.add(0, novoUsuario);
-            renderizarLista();
-            handleLimparFormulario();
-            alert("Usuário '" + nome + "' salvo com sucesso no MySQL!");
-        } else {
-            alert("ERRO ao salvar o usuário no banco de dados. Verifique a conexão.");
-        }
+        // 2. Adiciona na lista visual (para aparecer na tela agora)
+        listaDeUsuarios.add(0, user);
+
+        // 3. Atualiza a tela e limpa os campos
+        renderizarLista();
+        handleLimparFormulario();
+
+        alert("Usuário salvo com sucesso! (Apenas na memória)");
     }
 
     // =====================================================
@@ -106,30 +86,27 @@ public class UsuariodashboardController {
     private void renderizarLista() {
         listaUsuariosContainer.getChildren().clear();
 
-        for (Usuario u : listaDeUsuarios) {
+        for (Usuariodashboard u : listaDeUsuarios) {
             // Cria o cartão visual para cada usuário
             VBox card = new VBox(5);
-
-            // Estilo do cartão
-            String corBorda = u.getNivelAcesso() == NivelAcesso.ADMINISTRADOR ? "#EF4444" : "#CBD5E1";
-
             card.setStyle(
                     "-fx-padding: 15;" +
                             "-fx-background-color: #F8FAFC;" +
                             "-fx-background-radius: 8;" +
-                            "-fx-border-color: " + corBorda + ";" +
-                            "-fx-border-width: 2;"
+                            "-fx-border-color: #CBD5E1;" +
+                            "-fx-border-width: 1;"
             );
 
             Label lblNome = new Label(u.getNome());
-            lblNome.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #1E293B;");
+            lblNome.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
 
-            Label lblInfo = new Label("Nível: " + u.getTipo());
+            // Dica: Não é seguro mostrar a senha na lista, mas mantive como você fez
+            Label lblInfo = new Label(u.getTipo());
             lblInfo.setStyle("-fx-text-fill: #64748B;");
 
             card.getChildren().addAll(lblNome, lblInfo);
 
-            VBox.setMargin(card, new Insets(5, 0, 5, 0)); // Ajuste de margem
+            VBox.setMargin(card, new Insets(5));
             listaUsuariosContainer.getChildren().add(card);
         }
     }
